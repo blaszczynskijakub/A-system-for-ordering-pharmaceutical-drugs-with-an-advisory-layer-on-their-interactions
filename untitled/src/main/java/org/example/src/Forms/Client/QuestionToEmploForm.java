@@ -4,8 +4,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class LoanForm extends JFrame implements ActionListener {
-    private JLabel mainLabel;
+public class QuestionToEmploForm extends JFrame implements ActionListener {
     private JPanel mainPanel;
     private JLabel amountLabel;
     private JTextField amountTextField;
@@ -15,7 +14,7 @@ public class LoanForm extends JFrame implements ActionListener {
 
     private final Client parent;
 
-    public LoanForm(Client client) {
+    public QuestionToEmploForm(Client client) {
         parent = client;
 
         performButton.addActionListener(this);

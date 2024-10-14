@@ -1,8 +1,8 @@
 package org.example.src.Forms.Test;
 
 import org.example.src.Forms.Client.Client;
-import org.example.src.Forms.Client.CreditCard;
-import org.example.src.Forms.Client.CreditCardsForm;
+import org.example.src.Forms.Client.Medicine;
+import org.example.src.Forms.Client.CurrentMedicinesForm;
 import org.example.src.Forms.Client.OrderCreditCardForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,26 +15,26 @@ import java.util.ArrayList;
 
 import static org.mockito.Mockito.when;
 
-class OrderCreditCardFormTest {
+class OrderMedicineFormTest {
 
     @Mock
-    ArrayList<CreditCard> availableCardsMock;  @Mock
+    ArrayList<Medicine> availableCardsMock;  @Mock
     Client clientMock;  @Mock
-    CreditCardsForm creditCardsFormMock;
+    CurrentMedicinesForm currentMedicinesFormMock;
 
     private JComboBox<String> cardsCombo;
     private OrderCreditCardForm orderCreditCardForm;
-    CreditCard creditCard = new CreditCard("1234466890423456", new Date(2030, 12, 22),"Visa");
+    Medicine medicine = new Medicine("1234466890423456", new Date(2030, 12, 22),"Visa");
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        when(clientMock.getAvailableCards()).thenReturn(   new ArrayList<CreditCard>() {
+        when(clientMock.getAvailableCards()).thenReturn(   new ArrayList<Medicine>() {
             {
-                add(creditCard);
+                add(medicine);
 
             }
         });
-        orderCreditCardForm = new OrderCreditCardForm(clientMock, creditCardsFormMock);
+        orderCreditCardForm = new OrderCreditCardForm(clientMock, currentMedicinesFormMock);
     }
 
 

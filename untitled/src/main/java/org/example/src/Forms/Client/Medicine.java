@@ -8,19 +8,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
 
-public record CreditCard(String cardNumber, java.sql.Date expiryDate, String producerName) {
+public record Medicine(String medName) {
     private static final String[] producers = {"Visa", "MasterCard", "Discover", "American Express"};
 
     @Override
     public String toString() {
-        return cardNumber + " " + expiryDate.toString() + " " + producerName;
+        return medName;
     }
 
-    public static ArrayList<CreditCard> generateCards(Connection connection){
-        ArrayList<CreditCard> availableCards = new ArrayList<CreditCard>();
+    public static ArrayList<Medicine> generateCards(Connection connection){
+        ArrayList<Medicine> availableCards = new ArrayList<Medicine>();
         ResultSet resultSet = null;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT `Numer karty` FROM cards_view");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT `drug_name` FROM client_and_drug");
             resultSet = preparedStatement.executeQuery();
         } catch (SQLException e) {
             System.out.println(e);
@@ -58,7 +58,7 @@ public record CreditCard(String cardNumber, java.sql.Date expiryDate, String pro
 
                 java.sql.Date sqlDate = new java.sql.Date(date.getTime());
 
-                availableCards.add(new CreditCard(generatedString, sqlDate, producers[i]));
+                availableCards.add(new Medicine(generatedString));
             }
         }
 

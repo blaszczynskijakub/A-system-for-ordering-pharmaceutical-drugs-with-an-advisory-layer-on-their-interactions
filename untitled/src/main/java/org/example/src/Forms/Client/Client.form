@@ -3,146 +3,95 @@
   <grid id="27dc6" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="10" width="500" height="410"/>
+      <xy x="20" y="10" width="638" height="522"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="70527" binding="jPanel" layout-manager="GridLayoutManager" row-count="13" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="70527" binding="jPanel" layout-manager="GridLayoutManager" row-count="12" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <background color="-15197648"/>
+          <background color="-1638434"/>
+          <font swing-font="MenuItem.font"/>
         </properties>
         <border type="none"/>
         <children>
           <component id="16da1" class="javax.swing.JLabel" binding="nameLabel">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <foreground color="-1"/>
+              <font swing-font="MenuItem.font"/>
+              <foreground color="-33997"/>
               <text value="Imię i nazwisko"/>
             </properties>
           </component>
           <component id="711fd" class="javax.swing.JLabel" binding="balanceLabel">
             <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <foreground color="-1"/>
-              <text value="Saldo:"/>
+              <font swing-font="MenuItem.font"/>
+              <foreground color="-33997"/>
+              <text value="Apteka macierzysta"/>
             </properties>
           </component>
           <component id="f8ab3" class="javax.swing.JLabel" binding="accountNumberLabel">
             <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <foreground color="-1"/>
-              <text value="Numer konta:"/>
+              <font swing-font="MenuItem.font"/>
+              <foreground color="-33997"/>
+              <text value="Godzina"/>
             </properties>
           </component>
           <component id="7da75" class="javax.swing.JLabel" binding="nameFillLabel">
             <constraints>
-              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <foreground color="-1"/>
+              <font swing-font="MenuItem.font"/>
+              <foreground color="-33997"/>
               <text value="Label"/>
             </properties>
           </component>
           <component id="3e099" class="javax.swing.JLabel" binding="balanceFillLabel">
             <constraints>
-              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <foreground color="-1"/>
+              <font swing-font="MenuItem.font"/>
+              <foreground color="-33997"/>
               <text value="Label"/>
             </properties>
           </component>
           <component id="2d59c" class="javax.swing.JLabel" binding="accountFillLabel">
             <constraints>
-              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <foreground color="-1"/>
+              <font swing-font="MenuItem.font"/>
+              <foreground color="-33997"/>
               <text value="Label"/>
             </properties>
           </component>
           <component id="6bfe2" class="javax.swing.JLabel" binding="mainLabel">
             <constraints>
-              <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="6" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <foreground color="-1"/>
+              <font name="Consolas" size="18" style="2"/>
+              <foreground color="-33997"/>
               <text value="Menu główne"/>
-            </properties>
-          </component>
-          <vspacer id="70d97">
-            <constraints>
-              <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                <minimum-size width="10" height="10"/>
-                <preferred-size width="30" height="30"/>
-              </grid>
-            </constraints>
-          </vspacer>
-          <vspacer id="60544">
-            <constraints>
-              <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                <minimum-size width="10" height="10"/>
-                <preferred-size width="30" height="30"/>
-              </grid>
-            </constraints>
-          </vspacer>
-          <component id="7df98" class="javax.swing.JButton" binding="changeAccountDetailsButton">
-            <constraints>
-              <grid row="10" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Zmień dane konta"/>
-            </properties>
-          </component>
-          <component id="292f0" class="javax.swing.JLabel" binding="titleLabel">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <background color="-1"/>
-              <font name="Cooper Black" size="22" style="3"/>
-              <foreground color="-1"/>
-              <text value="Bank Bilardzistów"/>
-            </properties>
-          </component>
-          <component id="4569b" class="javax.swing.JButton" binding="transferMoneyButton">
-            <constraints>
-              <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Zleć przelew"/>
-            </properties>
-          </component>
-          <component id="4923e" class="javax.swing.JButton" binding="manageCardsButton">
-            <constraints>
-              <grid row="11" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Zarządzaj kartami kredytowymi"/>
-            </properties>
-          </component>
-          <component id="94438" class="javax.swing.JButton" binding="loanButton">
-            <constraints>
-              <grid row="9" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Weź pożyczkę"/>
             </properties>
           </component>
           <hspacer id="2d1a">
             <constraints>
-              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <minimum-size width="5" height="5"/>
                 <preferred-size width="5" height="5"/>
               </grid>
@@ -150,7 +99,7 @@
           </hspacer>
           <hspacer id="8cf99">
             <constraints>
-              <grid row="10" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+              <grid row="11" column="5" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                 <minimum-size width="5" height="5"/>
                 <preferred-size width="5" height="5"/>
               </grid>
@@ -158,18 +107,92 @@
           </hspacer>
           <vspacer id="53d53">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+              <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
                 <minimum-size width="10" height="10"/>
                 <preferred-size width="20" height="20"/>
               </grid>
             </constraints>
           </vspacer>
-          <component id="c010c" class="javax.swing.JButton" binding="transactionsHistoryButton">
+          <component id="292f0" class="javax.swing.JLabel" binding="titleLabel">
             <constraints>
-              <grid row="8" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Sprawdź historię transakcji"/>
+              <background color="-1"/>
+              <font name="Consolas" size="22" style="3"/>
+              <foreground color="-33997"/>
+              <text value="Klient"/>
+            </properties>
+          </component>
+          <component id="4923e" class="javax.swing.JButton" binding="manageCardsButton">
+            <constraints>
+              <grid row="7" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-16777216"/>
+              <foreground color="-33997"/>
+              <text value="Moje leki"/>
+            </properties>
+          </component>
+          <component id="4569b" class="javax.swing.JButton" binding="transferMoneyButton">
+            <constraints>
+              <grid row="8" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-16777216"/>
+              <foreground color="-33997"/>
+              <text value="Zamów leki"/>
+            </properties>
+          </component>
+          <component id="94438" class="javax.swing.JButton" binding="loanButton">
+            <constraints>
+              <grid row="9" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-16777216"/>
+              <foreground color="-33997"/>
+              <text value="Zapytaj farmaceutę"/>
+            </properties>
+          </component>
+          <component id="7df98" class="javax.swing.JButton" binding="changeAccountDetailsButton">
+            <constraints>
+              <grid row="11" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-16777216"/>
+              <foreground color="-33997"/>
+              <text value="Edytuj swoje dane"/>
+            </properties>
+          </component>
+          <component id="c010c" class="javax.swing.JButton" binding="transactionsHistoryButton">
+            <constraints>
+              <grid row="10" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <background color="-16777216"/>
+              <foreground color="-33997"/>
+              <text value="Sprawdź historię zamówień"/>
+            </properties>
+          </component>
+          <component id="12b73" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <font swing-font="MenuItem.font"/>
+              <foreground color="-33997"/>
+              <text value="Dzisiejszy harmonogram:"/>
+            </properties>
+          </component>
+          <component id="a88a7" class="javax.swing.JList" binding="eatSchedule">
+            <constraints>
+              <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="98"/>
+              </grid>
+            </constraints>
+            <properties>
+              <foreground color="-33997"/>
+              <model/>
             </properties>
           </component>
         </children>

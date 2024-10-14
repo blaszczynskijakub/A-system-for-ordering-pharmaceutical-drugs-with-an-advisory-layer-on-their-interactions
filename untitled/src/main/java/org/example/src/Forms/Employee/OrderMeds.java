@@ -7,7 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class CloseAcc extends JFrame implements ActionListener {
+public class OrderMeds extends JFrame implements ActionListener {
     private JPanel mainPanel;
     private JLabel mainLabel;
     private JLabel firstNameLabel;
@@ -69,11 +69,11 @@ public class CloseAcc extends JFrame implements ActionListener {
             frame.setVisible(true);
         }
         else {
-            ArrayList<String> items = parent.populateComboBox(name);
+            ArrayList<String> items = parent.populateComboBox(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet());
             comboBox1.setModel(new DefaultComboBoxModel<>(items.toArray(new String[0])));
         }
     }
-    public CloseAcc(Employee employee) {
+    public OrderMeds(Employee employee) {
         parent = employee;
 
         quitButton.addActionListener(this);
@@ -143,7 +143,7 @@ public class CloseAcc extends JFrame implements ActionListener {
             yesButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    parent.deleteAcc(((String) comboBox1.getSelectedItem()));
+                    parent.deleteAcc(((String) comboBox1.getSelectedItem()), parent.getConnection());
 
                     ;
 
@@ -171,7 +171,7 @@ public class CloseAcc extends JFrame implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            org.example.src.Forms.Employee.CloseAcc.this.parent.deleteAccount();
+            OrderMeds.this.parent.deleteAccount();
             parent.dispose();
         }
     }

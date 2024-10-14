@@ -1,16 +1,19 @@
 package org.example.src.Forms.Client;
 
+import org.example.src.Forms.DataHandler;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Client extends JFrame implements ActionListener {
+public class Client extends JFrame implements ActionListener, DataHandler {
     private JButton manageCardsButton;
     private JButton changeAccountDetailsButton;
     private JButton transferMoneyButton;
@@ -25,6 +28,7 @@ public class Client extends JFrame implements ActionListener {
     private JLabel accountFillLabel;
     private JLabel titleLabel;
     private JButton transactionsHistoryButton;
+    private JList eatSchedule;
 
 
     private String firstName;
@@ -38,21 +42,25 @@ public class Client extends JFrame implements ActionListener {
 
 
     private double balance;
-    private ArrayList<CreditCard> creditCards;
+    private ArrayList<Medicine> medicines;
 
     private Connection connection = null;
+    private PreparedStatement preparedStatement;
+    private ResultSet resultSet;
+
     public void setBalance(double balance) {
         this.balance = balance;
     }
     public Client(int clientId, String firstName, String lastName, String address, String city, Double balance, String accountNumber, int accountId) {
-        creditCards = new ArrayList<>();
+        medicines = new ArrayList<>();
         try {
             connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
-            PreparedStatement preparedStatement = Client.this.connection.prepareStatement("SELECT `Numer karty`, `Data ważności`, Producent FROM cards_view WHERE `Id klienta` = ?");
+            PreparedStatement preparedStatement = Client.this.connection.prepareStatement("SELECT `drug_name` FROM client_and_drug WHERE `id` = ?");
             preparedStatement.setInt(1, clientId);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                creditCards.add(new CreditCard(resultSet.getString(1), resultSet.getDate(2), resultSet.getString(3)));
+                medicines.add(new Medicine(resultSet.getString(1)));
+//                medicines.add(new Medicine(resultSet.getString(1), resultSet.getDate(2), resultSet.getString(3)));
             }
         }catch (Exception e){
             System.out.println(e);
@@ -94,15 +102,16 @@ public class Client extends JFrame implements ActionListener {
         }
         else if(e.getSource() == transferMoneyButton){
             setVisible(false);
-            new TransferForm(this);
+            new OrderMeds(this);
         }
         else if(e.getSource() == loanButton){
             setVisible(false);
-            new LoanForm(this);
+            new QuestionToEmploForm(this);
         }
         else if(e.getSource() == manageCardsButton){
             setVisible(false);
-            new CreditCardsForm(this);
+           // new OrderMeds(this);
+            new CurrentMedicinesForm(this);
         }
         else if(e.getSource() == transactionsHistoryButton){
             setVisible(false);
@@ -138,8 +147,8 @@ public class Client extends JFrame implements ActionListener {
         PreparedStatement deleteAccount = null;
         PreparedStatement deleteClient = null;
         try {
-            deleteCards = connection.prepareStatement("DELETE FROM credit_card WHERE client_id = ?");
-            deleteAccount = connection.prepareStatement("DELETE FROM accounts WHERE client_id = ?");
+            deleteCards = connection.prepareStatement("DELETE FROM drugs WHERE client_id = ?");
+            deleteAccount = connection.prepareStatement("DELETE FROM medicines WHERE client_id = ?");
             deleteClient = connection.prepareStatement("DELETE FROM clients WHERE id = ?");
 
             deleteCards.setInt(1, this.clientId);
@@ -158,11 +167,11 @@ public class Client extends JFrame implements ActionListener {
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
-    public boolean makeTransaction(boolean standard, double amount, String receiver, TransferForm form){
+    public boolean makeTransaction(boolean standard, double amount, String receiver, OrderMeds form){
         PreparedStatement insertTransaction = null;
         PreparedStatement subtractExpressCost = null;
         java.util.Date javaDate = new java.util.Date();
-        java.sql.Date mySQLDate = new java.sql.Date(javaDate.getTime());
+        Date mySQLDate = new Date(javaDate.getTime());
         int transactionTypeId;
         try{
             insertTransaction = connection.prepareStatement("INSERT INTO transactions(amount, type_id, account_id, transaction_date) VALUES (?, ?, ?, ?)");
@@ -177,15 +186,21 @@ public class Client extends JFrame implements ActionListener {
                 calendar.setTime(mySQLDate);
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
 
-                insertTransaction.setDate(4, new java.sql.Date(calendar.getTimeInMillis()));
+                insertTransaction.setDate(4, new Date(calendar.getTimeInMillis()));
+                subtractExpressCost = connection.prepareStatement("UPDATE medicines SET balance = (balance - ?) WHERE client_id = ?");
+                subtractExpressCost.setDouble(1, amount);
+                subtractExpressCost.setInt(2, clientId);
+                subtractExpressCost.executeUpdate();
+
             }
             else{
                 transactionTypeId = 8;
                 insertTransaction.setInt(2, transactionTypeId);
                 insertTransaction.setDate(4, mySQLDate);
 
-                subtractExpressCost = connection.prepareStatement("UPDATE accounts SET balance = balance - 5 WHERE client_id = ?");
-                subtractExpressCost.setInt(1, clientId);
+                subtractExpressCost = connection.prepareStatement("UPDATE medicines SET balance = (balance - 5 - ?) WHERE client_id = ?");
+                subtractExpressCost.setDouble(1, amount);
+                subtractExpressCost.setInt(2, clientId);
 
                 subtractExpressCost.executeUpdate();
             }
@@ -273,39 +288,40 @@ public class Client extends JFrame implements ActionListener {
         JOptionPane.showMessageDialog(this,"Poprawnie złożono wniosek");
     }
 
-    public ArrayList<CreditCard> getAvailableCards(){
-        return CreditCard.generateCards(connection);
+    public ArrayList<Medicine> getAvailableCards(){
+        return Medicine.generateCards(connection);
     }
 
-    public void addCardToAccount(CreditCard card){
+    public void addCardToAccount(Medicine card){
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO credit_card(card_number, expiry_date, client_id, producent_name) VALUES (?, ?, ?, ?)");
-            preparedStatement.setString(1, card.cardNumber());
-            preparedStatement.setDate(2, card.expiryDate());
-            preparedStatement.setInt(3, this.clientId);
-            preparedStatement.setString(4, card.producerName());
+//            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO drugs(drug_name, expiry_date, producent_name, price, drug_type) VALUES (?, ?, ?, ?, ?, ?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO drugs(drug_name) VALUES (?)");
+            preparedStatement.setString(1, card.medName());
+//            preparedStatement.setDate(2, card.expiryDate());
+//            preparedStatement.setInt(3, this.clientId);
+//            preparedStatement.setString(4, card.producerName());
 
             preparedStatement.executeUpdate();
         }catch (SQLException e){
             JOptionPane.showMessageDialog(this, e.getMessage());
             return;
         }
-        creditCards.add(card);
-        JOptionPane.showMessageDialog(this, "Pomyślnie dodano kartę");
+        medicines.add(card);
+        JOptionPane.showMessageDialog(this, "Pommelling dodano kartę");
     }
 
     public void deleteCard(int cardIndex){
-        CreditCard card = creditCards.get(cardIndex);
+        Medicine card = medicines.get(cardIndex);
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM credit_card WHERE card_number = ?");
-            preparedStatement.setString(1, card.cardNumber());
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM drugs WHERE drug_name = ?");
+            preparedStatement.setString(1, card.medName());
 
             preparedStatement.executeUpdate();
         }catch (SQLException e){
             JOptionPane.showMessageDialog(this, e.getMessage());
             return;
         }
-        creditCards.remove(cardIndex);
+        medicines.remove(cardIndex);
         JOptionPane.showMessageDialog(this, "Pomyślnie usunięto kartę");
     }
 
@@ -333,12 +349,32 @@ public class Client extends JFrame implements ActionListener {
         return accountNumber;
     }
 
-    public ArrayList<CreditCard> getCreditCards() {
-        return creditCards;
+    public ArrayList<Medicine> getCreditCards() {
+        return medicines;
     }
 
     public void setConnection(Connection connection){
         this.connection = connection;
+    }
+
+    public PreparedStatement getPreparedStatement() {
+        return preparedStatement;
+    }
+
+    public void setPreparedStatement(PreparedStatement preparedStatement) {
+        this.preparedStatement = preparedStatement;
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public ResultSet getResultSet() {
+        return resultSet;
+    }
+
+    public void setResultSet(ResultSet resultSet) {
+        this.resultSet = resultSet;
     }
 
     // History of transactions
@@ -391,9 +427,9 @@ public class Client extends JFrame implements ActionListener {
 
             jPanel.add(quitButton);
 
-            addWindowListener(new java.awt.event.WindowAdapter() {
+            addWindowListener(new WindowAdapter() {
                 @Override
-                public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                public void windowClosing(WindowEvent windowEvent) {
                     parent.setVisible(true);
                 }
             });

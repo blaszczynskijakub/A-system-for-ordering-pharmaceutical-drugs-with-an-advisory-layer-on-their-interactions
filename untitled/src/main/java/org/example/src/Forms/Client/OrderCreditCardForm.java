@@ -17,12 +17,12 @@ public class OrderCreditCardForm extends JFrame implements ActionListener {
     private JComboBox<String> cardsComboBox;
     private JButton performButton;
     private JButton quitButton;
-    private final ArrayList<CreditCard> availableCards;
+    private final ArrayList<Medicine> availableCards;
 
     private final Client parent;
-    private final CreditCardsForm cardsForm;
+    private final CurrentMedicinesForm cardsForm;
 
-    public OrderCreditCardForm(Client parent, CreditCardsForm cardsForm){
+    public OrderCreditCardForm(Client parent, CurrentMedicinesForm cardsForm){
         this.parent = parent;
         this.cardsForm = cardsForm;
 
@@ -31,7 +31,7 @@ public class OrderCreditCardForm extends JFrame implements ActionListener {
 
         availableCards = parent.getAvailableCards();
 
-        for(CreditCard card : availableCards){
+        for(Medicine card : availableCards){
             cardsComboBox.addItem(card.toString());
         }
 
@@ -47,7 +47,7 @@ public class OrderCreditCardForm extends JFrame implements ActionListener {
             parent.addCardToAccount(availableCards.get(cardsComboBox.getSelectedIndex()));
 
             ArrayList<String> dataList = new ArrayList<>();
-            for(CreditCard card : parent.getCreditCards()){
+            for(Medicine card : parent.getCreditCards()){
                 dataList.add(card.toString());
             }
             String[] data = new String[dataList.size()];

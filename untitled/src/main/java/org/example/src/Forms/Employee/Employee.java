@@ -2,7 +2,7 @@ package org.example.src.Forms.Employee;
 
 
 import org.example.src.Forms.Client.Client;
-import org.example.src.Forms.Client.TransferForm;
+import org.example.src.Forms.DataHandler;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,8 +14,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Employee extends JFrame implements ActionListener {
+public class Employee extends JFrame implements ActionListener, DataHandler {
 
+    public Connection getConnection() {
+        return connection;
+    }
 
     private ResultSet testResultSet;
 
@@ -62,7 +65,7 @@ public class Employee extends JFrame implements ActionListener {
 
     public Employee(int employeeId, String firstName, String lastName, String position, String branchName, String branchAdress) {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/projekt_banku", "root", "root");
+            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -100,7 +103,7 @@ public class Employee extends JFrame implements ActionListener {
             new ManageAcc(this);
         } else if (e.getSource() == closeAccButton) {
             setVisible(false);
-            new CloseAcc(this);
+            new OrderMeds(this);
         }
 //        else if(e.getSource() == manageCardsButton){
 //            setVisible(false);
@@ -135,13 +138,13 @@ public class Employee extends JFrame implements ActionListener {
         updateClientInfo();
     }
 
-    protected void deleteAccount() {
+    public void deleteAccount() {
         PreparedStatement deleteCards = null;
         PreparedStatement deleteAccount = null;
         PreparedStatement deleteClient = null;
         try {
             deleteCards = connection.prepareStatement("DELETE FROM credit_card WHERE client_id = ?");
-            deleteAccount = connection.prepareStatement("DELETE FROM accounts WHERE client_id = ?");
+            deleteAccount = connection.prepareStatement("DELETE FROM medicines WHERE client_id = ?");
             deleteClient = connection.prepareStatement("DELETE FROM clients WHERE id = ?");
 
             deleteCards.setInt(1, this.employeeId);
@@ -160,7 +163,7 @@ public class Employee extends JFrame implements ActionListener {
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
-    protected boolean makeTransaction(boolean standard, double amount, String receiver, TransferForm form) {
+    protected boolean makeTransaction(boolean standard, double amount, String receiver, org.example.src.Forms.Employee.OrderMeds form) {
         PreparedStatement insertTransaction = null;
         PreparedStatement subtractExpressCost = null;
         java.util.Date javaDate = new java.util.Date();
@@ -185,7 +188,7 @@ public class Employee extends JFrame implements ActionListener {
                 insertTransaction.setInt(2, transactionTypeId);
                 insertTransaction.setDate(4, mySQLDate);
 
-                subtractExpressCost = connection.prepareStatement("UPDATE accounts SET balance = balance - 5 WHERE client_id = ?");
+                subtractExpressCost = connection.prepareStatement("UPDATE medicines SET balance = balance - 5 WHERE client_id = ?");
                 subtractExpressCost.setInt(1, employeeId);
 
                 subtractExpressCost.executeUpdate();
@@ -314,47 +317,47 @@ public class Employee extends JFrame implements ActionListener {
         return resultSet;
     }
 
-    public ArrayList<String> populateComboBox(String dane) {
-        try {
+//    public ArrayList<String> populateComboBox(String dane) {
+//        try {
+//
+//
+//            String query = "SELECT id, acc_nr, acc_id FROM close_acc_info_view WHERE first_name=? AND last_name=? ";
+//
+//            preparedStatement = connection.prepareStatement(query);
+//            preparedStatement.setString(1, dane.split(" ")[0]);
+//            preparedStatement.setString(2, dane.split(" ")[1]);
+//             resultSet = preparedStatement.executeQuery();
+//
+//            // Populate the comboBox1 with the fetched data
+//            ArrayList<String> items = new ArrayList<>();
+//            while (resultSet.next()) {
+//                items.add("id: " + resultSet.getString("id") + ", nr konta: " + resultSet.getString("acc_nr")+ " , id konta: "+resultSet.getString("acc_id"));
+//            }
+//            // Add items to comboBox1
+//
+//            // Close the resources
+//            resultSet.close();
+//            preparedStatement.close();
+//            return items;
+//
+//
+//
+//        } catch (SQLException ex) {
+//            throw new RuntimeException(ex);
+//        }
+//
+//
+//    }
 
-
-            String query = "SELECT id, acc_nr, acc_id FROM close_acc_info_view WHERE first_name=? AND last_name=? ";
-
-            preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, dane.split(" ")[0]);
-            preparedStatement.setString(2, dane.split(" ")[1]);
-             resultSet = preparedStatement.executeQuery();
-
-            // Populate the comboBox1 with the fetched data
-            ArrayList<String> items = new ArrayList<>();
-            while (resultSet.next()) {
-                items.add("id: " + resultSet.getString("id") + ", nr konta: " + resultSet.getString("acc_nr")+ " , id konta: "+resultSet.getString("acc_id"));
-            }
-            // Add items to comboBox1
-
-            // Close the resources
-            resultSet.close();
-            preparedStatement.close();
-            return items;
-
-
-
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
-
-
-    }
-
-    public void deleteAcc(String dane) {
+    public void deleteAcc(String dane, Connection connection) {
         try {
             String queryFirst = "DELETE FROM transactions WHERE  account_id=?";
-            PreparedStatement preparedStatementFirst = connection.prepareStatement(queryFirst);
+            PreparedStatement preparedStatementFirst = this.connection.prepareStatement(queryFirst);
             preparedStatementFirst.setString(1, ((String) dane.split(" ")[8]));
 
             preparedStatementFirst.executeUpdate();
-            String query = "DELETE FROM accounts WHERE  account_number=?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            String query = "DELETE FROM medicines WHERE  account_number=?";
+            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
             preparedStatement.setString(1, ((String) dane.split(" ")[4]));
 
             preparedStatement.executeUpdate();
