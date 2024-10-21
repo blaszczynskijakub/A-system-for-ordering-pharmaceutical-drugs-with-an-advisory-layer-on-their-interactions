@@ -1,5 +1,7 @@
 package org.example.src.Forms;
 
+import org.example.src.Forms.Client.Medicine;
+
 import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,20 +10,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface DataHandler {
-    default ArrayList<String> populateComboBox(String dane,  PreparedStatement preparedStatement, Connection connection, ResultSet resultSet) {
+    default ArrayList<Medicine> populateComboBox(String dane, PreparedStatement preparedStatement, Connection connection, ResultSet resultSet, int client_id) {
         try {
 
 
 //            String query = "SELECT drug_name FROM drugs WHERE first_name=? AND last_name=? ";
             String query;
             if(dane.split(" ").length>1 && preparedStatement!=null) {
-                 query = "SELECT drug_name, producent_name, price FROM drugs WHERE drug_name=? OR drug_name=? OR producent_name=? OR producent_name=?";
+                 query = "SELECT drug_name, producent_name, price, id FROM drugs WHERE drug_name=? OR drug_name=? OR producent_name=? OR producent_name=?";
 
                 preparedStatement.setString(3, dane.split(" ")[1]);
                 preparedStatement.setString(4, dane.split(" ")[1]);
             }
             else{
-                query = "SELECT drug_name, producent_name, price FROM drugs WHERE drug_name=?  OR producent_name=?";
+                query = "SELECT drug_name, producent_name, price, id FROM drugs WHERE drug_name=?  OR producent_name=?";
 
             }
 
@@ -32,9 +34,10 @@ public interface DataHandler {
             resultSet = preparedStatement.executeQuery();
 
             // Populate the comboBox1 with the fetched data
-            ArrayList<String> items = new ArrayList<>();
+            ArrayList<Medicine> items = new ArrayList<>();
             while (resultSet.next()) {
-                items.add("nazwa: " + resultSet.getString("drug_name") + ", producent: " + resultSet.getString("producent_name")+ " , cena: "+resultSet.getString("price")+" pln");
+//                items.add("nazwa: " + resultSet.getString("drug_name") + ", producent: " + resultSet.getString("producent_name")+ " , cena: "+resultSet.getString("price")+" pln"+ " "+resultSet.getString("id"));
+                items.add(new Medicine(resultSet.getInt("id")));
             }
             // Add items to comboBox1
 

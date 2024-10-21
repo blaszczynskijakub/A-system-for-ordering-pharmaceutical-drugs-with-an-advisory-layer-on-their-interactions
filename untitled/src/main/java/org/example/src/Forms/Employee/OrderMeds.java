@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 public class OrderMeds extends JFrame implements ActionListener {
     private JPanel mainPanel;
@@ -69,8 +68,8 @@ public class OrderMeds extends JFrame implements ActionListener {
             frame.setVisible(true);
         }
         else {
-            ArrayList<String> items = parent.populateComboBox(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet());
-            comboBox1.setModel(new DefaultComboBoxModel<>(items.toArray(new String[0])));
+//            ArrayList<String> items = parent.populateComboBox(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet(),parent.);
+//            comboBox1.setModel(new DefaultComboBoxModel<>(items.toArray(new String[0])));
         }
     }
     public OrderMeds(Employee employee) {

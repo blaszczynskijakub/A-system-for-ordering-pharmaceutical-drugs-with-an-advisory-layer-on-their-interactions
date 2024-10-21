@@ -5,6 +5,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class OrderMeds extends JFrame implements ActionListener {
@@ -72,8 +78,10 @@ public class OrderMeds extends JFrame implements ActionListener {
             frame.setVisible(true);
         }
         else {
-            ArrayList<String> items = parent.populateComboBox(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet());
-            comboBox1.setModel(new DefaultComboBoxModel<>(items.toArray(new String[0])));
+            ArrayList<Medicine> items = parent.populateComboBox(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet(), parent.clientId);
+            comboBox1.setModel(new DefaultComboBoxModel<>(items.toArray(new Medicine[0])));
+//            System.out.println((((String) comboBox1.getSelectedItem()).split(" "))[(((String) comboBox1.getSelectedItem()).split(" ")).length-1]);
+
         }
     }
     public OrderMeds(Client employee) {
@@ -120,21 +128,46 @@ public class OrderMeds extends JFrame implements ActionListener {
         if(e.getSource() == orderMedButton){
              final ArrayList<Medicine> availableCards;
 
-            availableCards = parent.getAvailableCards();
-
-
-            parent.addCardToAccount(availableCards.get(comboBox1.getSelectedIndex()));
-
-            ArrayList<String> dataList = new ArrayList<>();
-            for(Medicine card : parent.getCreditCards()){
-                dataList.add(card.toString());
+            try {
+                availableCards = parent.getAvailableCards();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
-            String[] data = new String[dataList.size()];
-            dataList.toArray(data);
+//
+//            System.out.println(comboBox1.getSelectedItem());
+            parent.addCardToAccount((Medicine) comboBox1.getSelectedItem());
+//
 
 
 
-            dispose();
+
+
+//            ArrayList<String> dataList = new ArrayList<>();
+//            for(Medicine card : parent.getCreditCards()){
+//                dataList.add(card.toString());
+//            }
+//            String[] data = new String[dataList.size()];
+//            dataList.toArray(data);
+            try {
+                parent.connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
+                PreparedStatement preparedStatement = parent.connection.prepareStatement("SELECT `drug_id`,`client_id`,`id`   FROM drugs_and_clients WHERE `client_id` = ?");
+                preparedStatement.setInt(1, parent.clientId);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                int i=0;
+                while (parent.medicines.size()>0) {
+                    parent.medicines.remove(0);
+//                medicines.add(new Medicine(resultSet.getString(1), resultSet.getDate(2), resultSet.getString(3)));
+                }
+                while (resultSet.next()) {
+                    parent.medicines.add(new Medicine(Integer.parseInt(resultSet.getString(1)), Integer.parseInt(resultSet.getString(2)), Integer.parseInt(resultSet.getString(3))));
+//                medicines.add(new Medicine(resultSet.getString(1), resultSet.getDate(2), resultSet.getString(3)));
+                }
+            }catch (Exception s){
+                System.out.println(s);
+            }
+//
+//
+//            dispose();
 
 
         }
@@ -154,9 +187,9 @@ public class OrderMeds extends JFrame implements ActionListener {
 
 
 
-            addWindowListener(new java.awt.event.WindowAdapter() {
+            addWindowListener(new WindowAdapter() {
                 @Override
-                public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                public void windowClosing(WindowEvent windowEvent) {
                     parent.setVisible(true);
                 }
             });

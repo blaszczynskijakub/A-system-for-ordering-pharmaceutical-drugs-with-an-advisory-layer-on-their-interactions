@@ -35,34 +35,34 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     private String lastName;
     private String address;
     private String city;
-    private final int clientId;
+    public final int clientId;
     private final int accountId;
     private final String accountNumber;
 
 
-
     private double balance;
-    private ArrayList<Medicine> medicines;
+    public ArrayList<Medicine> medicines;
 
-    private Connection connection = null;
+    Connection connection = null;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
 
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
+
     public Client(int clientId, String firstName, String lastName, String address, String city, Double balance, String accountNumber, int accountId) {
         medicines = new ArrayList<>();
         try {
             connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
-            PreparedStatement preparedStatement = Client.this.connection.prepareStatement("SELECT `drug_name` FROM client_and_drug WHERE `id` = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT `drug_id`,`client_id`,`id`   FROM drugs_and_clients WHERE `client_id` = ?");
             preparedStatement.setInt(1, clientId);
             ResultSet resultSet = preparedStatement.executeQuery();
+
+
             while (resultSet.next()) {
-                medicines.add(new Medicine(resultSet.getString(1)));
-//                medicines.add(new Medicine(resultSet.getString(1), resultSet.getDate(2), resultSet.getString(3)));
+                medicines.add(new Medicine(Integer.parseInt(resultSet.getString(1)), Integer.parseInt(resultSet.getString(2)), Integer.parseInt(resultSet.getString(3))));
             }
-        }catch (Exception e){
+
+
+        } catch (Exception e) {
             System.out.println(e);
         }
 
@@ -96,34 +96,29 @@ public class Client extends JFrame implements ActionListener, DataHandler {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == changeAccountDetailsButton){
+        if (e.getSource() == changeAccountDetailsButton) {
             setVisible(false);
             new ClientCredentialsForm(this);
-        }
-        else if(e.getSource() == transferMoneyButton){
+        } else if (e.getSource() == transferMoneyButton) {
             setVisible(false);
             new OrderMeds(this);
-        }
-        else if(e.getSource() == loanButton){
+        } else if (e.getSource() == loanButton) {
             setVisible(false);
             new QuestionToEmploForm(this);
-        }
-        else if(e.getSource() == manageCardsButton){
+        } else if (e.getSource() == manageCardsButton) {
             setVisible(false);
-           // new OrderMeds(this);
             new CurrentMedicinesForm(this);
-        }
-        else if(e.getSource() == transactionsHistoryButton){
+        } else if (e.getSource() == transactionsHistoryButton) {
             setVisible(false);
             new transactionsFrame(this);
         }
 
     }
 
-    protected void updateCredentials(String firstName, String lastName, String address, String city){
+    protected void updateCredentials(String firstName, String lastName, String address, String city) {
         // TODO check if given strings are logical (e.g return if firstName contains a digit)
 
-        PreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement;
         try {
             preparedStatement = connection.prepareStatement("UPDATE clients SET first_name = ?, last_name = ?, address = ?, city = ? WHERE id = ?");
 
@@ -134,7 +129,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
             preparedStatement.setInt(5, this.clientId);
 
             preparedStatement.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return;
         }
@@ -142,10 +137,10 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         updateClientInfo();
     }
 
-    protected void deleteAccount(){
-        PreparedStatement deleteCards = null;
-        PreparedStatement deleteAccount = null;
-        PreparedStatement deleteClient = null;
+    protected void deleteAccount() {
+        PreparedStatement deleteCards;
+        PreparedStatement deleteAccount;
+        PreparedStatement deleteClient;
         try {
             deleteCards = connection.prepareStatement("DELETE FROM drugs WHERE client_id = ?");
             deleteAccount = connection.prepareStatement("DELETE FROM medicines WHERE client_id = ?");
@@ -159,7 +154,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
             deleteAccount.executeUpdate();
             deleteClient.executeUpdate();
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return;
         }
@@ -167,18 +162,18 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
-    public boolean makeTransaction(boolean standard, double amount, String receiver, OrderMeds form){
-        PreparedStatement insertTransaction = null;
-        PreparedStatement subtractExpressCost = null;
+    public boolean makeTransaction(boolean standard, double amount, String receiver, OrderMeds form) {
+        PreparedStatement insertTransaction;
+        PreparedStatement subtractExpressCost;
         java.util.Date javaDate = new java.util.Date();
         Date mySQLDate = new Date(javaDate.getTime());
         int transactionTypeId;
-        try{
+        try {
             insertTransaction = connection.prepareStatement("INSERT INTO transactions(amount, type_id, account_id, transaction_date) VALUES (?, ?, ?, ?)");
             insertTransaction.setDouble(1, amount);
             insertTransaction.setInt(3, accountId);
 
-            if(standard){
+            if (standard) {
                 transactionTypeId = 2;
                 insertTransaction.setInt(2, transactionTypeId);
 
@@ -192,8 +187,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
                 subtractExpressCost.setInt(2, clientId);
                 subtractExpressCost.executeUpdate();
 
-            }
-            else{
+            } else {
                 transactionTypeId = 8;
                 insertTransaction.setInt(2, transactionTypeId);
                 insertTransaction.setDate(4, mySQLDate);
@@ -206,13 +200,13 @@ public class Client extends JFrame implements ActionListener, DataHandler {
             }
 
             insertTransaction.executeUpdate();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             return false;
         }
 
-        PreparedStatement getAccountID = null;
-        PreparedStatement insertIncoming = null;
+        PreparedStatement getAccountID;
+        PreparedStatement insertIncoming;
         try {
             getAccountID = connection.prepareStatement("SELECT clients_info_view.`ID konta` FROM clients_info_view WHERE `Numer konta` = ?");
             getAccountID.setString(1, receiver);
@@ -225,7 +219,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
             insertIncoming.setInt(3, resultSet.getInt(1));
             insertIncoming.setDate(4, mySQLDate);
             insertIncoming.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(form, "Przelano do klienta innego banku");
         }
 
@@ -233,8 +227,8 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         return true;
     }
 
-    public void updateClientInfo(){
-        try{
+    public void updateClientInfo() {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT `Imię`, `Nazwisko`, `Adres`, `Miasto`, `Saldo` FROM clients_info_view WHERE ID = ?");
             preparedStatement.setInt(1, clientId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -245,7 +239,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
             address = resultSet.getString(3);
             city = resultSet.getString(4);
             balance = resultSet.getDouble(5);
-        }catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return;
         }
@@ -255,21 +249,21 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         repaint();
     }
 
-    protected void applyForLoan(double amount){
+    protected void applyForLoan(double amount) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM loan_info_view WHERE `ID klienta` = ? AND Zatwierdzono IS NULL");
             preparedStatement.setInt(1, clientId);
             ResultSet resultSet = preparedStatement.executeQuery();
             int rows = 0;
 
-            while(resultSet.next())
+            while (resultSet.next())
                 rows++;
 
-            if(rows > 0){
+            if (rows > 0) {
                 JOptionPane.showMessageDialog(this, "Nie możesz mieć więcej niż jeden oczekujący wniosek o pożyczkę");
                 return;
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
             return;
         }
@@ -280,29 +274,28 @@ public class Client extends JFrame implements ActionListener, DataHandler {
             preparedStatement.setInt(2, clientId);
 
             preparedStatement.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
             return;
         }
 
-        JOptionPane.showMessageDialog(this,"Poprawnie złożono wniosek");
+        JOptionPane.showMessageDialog(this, "Poprawnie złożono wniosek");
     }
 
-    public ArrayList<Medicine> getAvailableCards(){
-        return Medicine.generateCards(connection);
+    public ArrayList<Medicine> getAvailableCards() throws SQLException {
+
+        return Medicine.generateCards(connection, clientId);
     }
 
-    public void addCardToAccount(Medicine card){
+    public void addCardToAccount(Medicine card) {
         try {
-//            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO drugs(drug_name, expiry_date, producent_name, price, drug_type) VALUES (?, ?, ?, ?, ?, ?)");
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO drugs(drug_name) VALUES (?)");
-            preparedStatement.setString(1, card.medName());
-//            preparedStatement.setDate(2, card.expiryDate());
-//            preparedStatement.setInt(3, this.clientId);
-//            preparedStatement.setString(4, card.producerName());
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO drugs_and_clients(drug_id, client_id) VALUES (?, ?)");
+            preparedStatement.setInt(1, 141);
+            preparedStatement.setInt(2, 2);
+
 
             preparedStatement.executeUpdate();
-        }catch (SQLException e){
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
             return;
         }
@@ -310,19 +303,32 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         JOptionPane.showMessageDialog(this, "Pommelling dodano kartę");
     }
 
-    public void deleteCard(int cardIndex){
+    public void deleteCard(int cardIndex) {
+        try {
+            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         Medicine card = medicines.get(cardIndex);
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM drugs WHERE drug_name = ?");
-            preparedStatement.setString(1, card.medName());
 
-            preparedStatement.executeUpdate();
-        }catch (SQLException e){
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM drugs_and_clients WHERE drug_id = ? AND client_id= ? AND id= ?");
+            System.out.println(Integer.valueOf(card.drug_id));
+
+            System.out.println(Integer.valueOf(card.client_id));
+            preparedStatement.setInt(1, card.drug_id);
+            preparedStatement.setInt(2, card.client_id);
+            preparedStatement.setInt(3, card.id);
+
+
+            preparedStatement.execute();
+            medicines.remove(cardIndex);
+            JOptionPane.showMessageDialog(this, "Pomyślnie usunięto kartę");
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
-            return;
         }
-        medicines.remove(cardIndex);
-        JOptionPane.showMessageDialog(this, "Pomyślnie usunięto kartę");
+
     }
 
     public String getFirstName() {
@@ -353,7 +359,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         return medicines;
     }
 
-    public void setConnection(Connection connection){
+    public void setConnection(Connection connection) {
         this.connection = connection;
     }
 
@@ -373,24 +379,22 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         return resultSet;
     }
 
-    public void setResultSet(ResultSet resultSet) {
-        this.resultSet = resultSet;
-    }
 
     // History of transactions
-    private class transactionsFrame extends JFrame implements ActionListener{
+    private class transactionsFrame extends JFrame implements ActionListener {
         private final Client parent;
         private final JButton quitButton;
-        private transactionsFrame(Client parent){
+
+        private transactionsFrame(Client parent) {
             this.parent = parent;
 
-            JPanel jPanel = new JPanel(new GridLayout(3,1));
+            JPanel jPanel = new JPanel(new GridLayout(3, 1));
             jPanel.setBackground(new Color(24, 26, 48));
 
             Font font = new Font("Cooper Black", Font.BOLD | Font.ITALIC, 22);
             JLabel label = new JLabel();
             label.setFont(font);
-            label.setForeground(new Color(255,255,255));
+            label.setForeground(new Color(255, 255, 255));
             label.setText("Bank Bilardzistów");
             label.setHorizontalAlignment(JLabel.CENTER);
             jPanel.add(label);
@@ -404,24 +408,24 @@ public class Client extends JFrame implements ActionListener, DataHandler {
 
             ArrayList<Object[]> dataList = new ArrayList<>();
 
-            try{
+            try {
                 PreparedStatement preparedStatement = Client.this.connection.prepareStatement("SELECT `Rodzaj transakcji`, Data, Kwota FROM transactions_view WHERE `Numer konta` = ?");
                 preparedStatement.setString(1, Client.this.accountNumber);
                 ResultSet set = preparedStatement.executeQuery();
-                while(set.next()){
-                    Object[] row = new Object[]{set.getString(1), set.getDate(2),set.getDouble(3)};
+                while (set.next()) {
+                    Object[] row = new Object[]{set.getString(1), set.getDate(2), set.getDouble(3)};
                     dataList.add(row);
                 }
                 Object[][] data = new Object[dataList.size()][];
                 dataList.toArray(data);
-                String[] columns = {"Rodzaj transakcji", "Data","Kwota"};
+                String[] columns = {"Rodzaj transakcji", "Data", "Kwota"};
                 DefaultTableModel tableModel = new DefaultTableModel(data, columns);
 
                 JTable transactions = new JTable(tableModel);
                 transactions.getColumnModel().getColumn(0).setMinWidth(220);
                 JScrollPane scrollPane = new JScrollPane(transactions);
                 jPanel.add(scrollPane);
-            }catch (SQLException e){
+            } catch (SQLException e) {
                 JOptionPane.showMessageDialog(this, "Brak transakcji do pokazania");
             }
 
@@ -441,7 +445,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(e.getSource() == quitButton){
+            if (e.getSource() == quitButton) {
                 parent.setVisible(true);
                 dispose();
             }

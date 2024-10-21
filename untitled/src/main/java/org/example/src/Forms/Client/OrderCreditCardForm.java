@@ -3,6 +3,7 @@ package org.example.src.Forms.Client;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class OrderCreditCardForm extends JFrame implements ActionListener {
@@ -22,7 +23,7 @@ public class OrderCreditCardForm extends JFrame implements ActionListener {
     private final Client parent;
     private final CurrentMedicinesForm cardsForm;
 
-    public OrderCreditCardForm(Client parent, CurrentMedicinesForm cardsForm){
+    public OrderCreditCardForm(Client parent, CurrentMedicinesForm cardsForm) throws SQLException {
         this.parent = parent;
         this.cardsForm = cardsForm;
 

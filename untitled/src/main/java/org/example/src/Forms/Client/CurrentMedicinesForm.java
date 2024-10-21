@@ -3,6 +3,7 @@ package org.example.src.Forms.Client;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class CurrentMedicinesForm extends JFrame implements ActionListener {
@@ -57,7 +58,11 @@ public class CurrentMedicinesForm extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Nie można posiadać więcej niż 3 karty kredytowe");
                 return;
             }
-            new OrderCreditCardForm(parent, this);
+            try {
+                new OrderCreditCardForm(parent, this);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
         else if(e.getSource() == deleteButton){
             parent.deleteCard(list1.getSelectedIndex());
