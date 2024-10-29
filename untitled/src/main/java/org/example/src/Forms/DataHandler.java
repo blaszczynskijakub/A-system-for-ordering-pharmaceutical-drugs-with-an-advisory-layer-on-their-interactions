@@ -17,19 +17,19 @@ public interface DataHandler {
 //            String query = "SELECT drug_name FROM drugs WHERE first_name=? AND last_name=? ";
             String query;
             if(dane.split(" ").length>1 && preparedStatement!=null) {
-                 query = "SELECT drug_name, producent_name, price, id FROM drugs WHERE drug_name=? OR drug_name=? OR producent_name=? OR producent_name=?";
+                 query = "SELECT drug_name, producent_name, price, id FROM drugs WHERE drug_name like ? OR drug_name like ? OR producent_name like ? OR producent_name like ?";
 
-                preparedStatement.setString(3, dane.split(" ")[1]);
-                preparedStatement.setString(4, dane.split(" ")[1]);
+                preparedStatement.setString(3, dane.split(" ")[1]+"%");
+                preparedStatement.setString(4, dane.split(" ")[1]+"%");
             }
             else{
-                query = "SELECT drug_name, producent_name, price, id FROM drugs WHERE drug_name=?  OR producent_name=?";
+                query = "SELECT drug_name, producent_name, price, id FROM drugs WHERE drug_name like ?  OR producent_name like ?";
 
             }
 
             preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, dane.split(" ")[0]);
-            preparedStatement.setString(2, dane.split(" ")[0]);
+            preparedStatement.setString(1, dane.split(" ")[0]+"%");
+            preparedStatement.setString(2, dane.split(" ")[0]+"%");
 
             resultSet = preparedStatement.executeQuery();
 
@@ -37,7 +37,7 @@ public interface DataHandler {
             ArrayList<Medicine> items = new ArrayList<>();
             while (resultSet.next()) {
 //                items.add("nazwa: " + resultSet.getString("drug_name") + ", producent: " + resultSet.getString("producent_name")+ " , cena: "+resultSet.getString("price")+" pln"+ " "+resultSet.getString("id"));
-                items.add(new Medicine(resultSet.getInt("id")));
+                items.add(new Medicine(resultSet.getInt("id"), resultSet.getString("drug_name"),resultSet.getString("producent_name"),resultSet.getInt("price"), Medicine.OrderStatus.inRealisation                ));
             }
             // Add items to comboBox1
 

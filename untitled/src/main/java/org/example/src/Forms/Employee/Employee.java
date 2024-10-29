@@ -1,14 +1,13 @@
 package org.example.src.Forms.Employee;
 
 
-import org.example.src.Forms.Client.Client;
 import org.example.src.Forms.DataHandler;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.*;
 import java.util.ArrayList;
@@ -51,6 +50,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     private JButton changeDataButton;
     private JLabel adresOddzialuLabel;
     private JLabel label1;
+    private JButton controlOrdersButton;
 
 
     private String firstName;
@@ -70,6 +70,9 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
             System.out.println(e);
         }
 
+
+
+
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = branchAdress;
@@ -83,6 +86,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
         closeAccButton.addActionListener(this);
         loanButton.addActionListener(this);
         changeDataButton.addActionListener(this);
+        controlOrdersButton.addActionListener(this);
 
         nameFillLabel.setText(firstName + " " + lastName);
         positionFillLabel.setText(position);
@@ -105,6 +109,11 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
             setVisible(false);
             new OrderMeds(this);
         }
+        else if (e.getSource() == controlOrdersButton) {
+            setVisible(false);
+            System.out.println(123);
+            new TransactionsFrame(this, connection);
+        }
 //        else if(e.getSource() == manageCardsButton){
 //            setVisible(false);
 //            new CreditCardsForm(this);
@@ -116,7 +125,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
 
     }
 
-    public void updateCredentials(String firstName, String lastName, String address, String city) {
+    public void updateCredentials(String firstName, String lastName, String address, String city, String id) {
         // TODO check if given strings are logical (e.g return if firstName contains a digit)
 
         PreparedStatement preparedStatement = null;
@@ -127,7 +136,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
             preparedStatement.setString(2, lastName);
             preparedStatement.setString(3, address);
             preparedStatement.setString(4, city);
-            preparedStatement.setInt(5, this.employeeId);
+            preparedStatement.setInt(5, Integer.parseInt(id));
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -244,8 +253,6 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
             return;
         }
 
-        nameFillLabel.setText(firstName + " " + lastName);
-        positionFillLabel.setText(String.valueOf(balance));
     }
 
     protected String[] getLoans(){
@@ -396,76 +403,122 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
 
 
     // History of transactions
-    private class transactionsFrame extends JFrame implements ActionListener {
-        private final Client parent;
-        private final JButton quitButton;
+    public class TransactionsFrame extends JDialog {
+        private JFrame parent;
+        private Connection connection;
+        private JButton quitButton;
+        private JButton changeStatus;
+        private JList<String> transactionsList; // Make transactionsList an instance variable
+        private DefaultListModel<String> listModel;
 
-        private transactionsFrame(Client parent) {
+        public TransactionsFrame(JFrame parent, Connection connection) {
             this.parent = parent;
+            this.connection = connection;
 
-            JPanel jPanel = new JPanel(new GridLayout(3, 1));
+            JPanel jPanel = new JPanel(new BorderLayout());
             jPanel.setBackground(new Color(24, 26, 48));
 
             Font font = new Font("Cooper Black", Font.BOLD | Font.ITALIC, 22);
-            JLabel label = new JLabel();
+            JLabel label = new JLabel("Bank Bilardzistów", JLabel.CENTER);
             label.setFont(font);
-            label.setForeground(new Color(255, 255, 255));
-            label.setText("Bank Bilardzistów");
-            label.setHorizontalAlignment(JLabel.CENTER);
-            jPanel.add(label);
+            label.setForeground(Color.WHITE);
+            jPanel.add(label, BorderLayout.NORTH);
 
             setTitle("Historia transakcji");
             setContentPane(jPanel);
 
-            quitButton = new JButton();
-            quitButton.setText("Powrót");
-            quitButton.addActionListener(this);
+            quitButton = new JButton("Powrót");
+            quitButton.addActionListener(e -> {
+                setVisible(false);
+                parent.setVisible(true);
+            });
 
-            ArrayList<Object[]> dataList = new ArrayList<>();
+            // Add change status button with functionality
+            changeStatus = new JButton("Zmień status na 'w dostawie'");
+            changeStatus.addActionListener(e -> {
 
-            try {
-                PreparedStatement preparedStatement = Employee.this.connection.prepareStatement("SELECT `Rodzaj transakcji`, Data, Kwota FROM transactions_view WHERE `Numer konta` = ?");
-//                preparedStatement.setString(1, Employee.this.accountNumber);
-                ResultSet set = preparedStatement.executeQuery();
-                while (set.next()) {
-                    Object[] row = new Object[]{set.getString(1), set.getDate(2), set.getDouble(3)};
-                    dataList.add(row);
+                String newStatus=transactionsList.getSelectedValue().split(" ")[13].replace(",","");
+
+
+                String queryFirst = "UPDATE  drugs_and_clients SET status='taken' WHERE  id=?";
+
+                PreparedStatement preparedStatementFirst = null;
+                try {
+                    preparedStatementFirst = this.connection.prepareStatement(queryFirst);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
                 }
-                Object[][] data = new Object[dataList.size()][];
-                dataList.toArray(data);
-                String[] columns = {"Rodzaj transakcji", "Data", "Kwota"};
-                DefaultTableModel tableModel = new DefaultTableModel(data, columns);
+                try {
+                    preparedStatementFirst.setInt(1, Integer.parseInt(newStatus));
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
 
-                JTable transactions = new JTable(tableModel);
-                transactions.getColumnModel().getColumn(0).setMinWidth(220);
-                JScrollPane scrollPane = new JScrollPane(transactions);
-                jPanel.add(scrollPane);
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(this, "Brak transakcji do pokazania");
-            }
 
-            jPanel.add(quitButton);
+                try {
+                    preparedStatementFirst.executeUpdate();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                //mam tu id klienta i id transakcji konkretnej
+                //ale jednak trzeba w sql tez ten status wsadzić :/
 
-            addWindowListener(new java.awt.event.WindowAdapter() {
+            });
+            listModel = new DefaultListModel<>();
+            transactionsList = new JList<>(listModel); // Initialize transactionsList
+
+            // Load transactions into the list
+            loadTransactions();
+
+            transactionsList.setFont(new Font("Arial", Font.PLAIN, 16));
+            transactionsList.setBackground(new Color(240, 240, 240));
+            JScrollPane scrollPane = new JScrollPane(transactionsList);
+            scrollPane.setPreferredSize(new Dimension(380, 200));
+
+            jPanel.add(scrollPane, BorderLayout.CENTER);
+            jPanel.add(quitButton, BorderLayout.SOUTH);
+            jPanel.add(changeStatus, BorderLayout.EAST);
+
+            addWindowListener(new WindowAdapter() {
                 @Override
-                public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                public void windowClosing(WindowEvent windowEvent) {
                     parent.setVisible(true);
                 }
             });
 
-            setSize(400, 300);
+            setSize(600, 400); // Increased size for better readability
+            setLocationRelativeTo(parent);
             setVisible(true);
-
         }
+        private void loadTransactions() {
+            listModel.clear(); // Clear the list before loading transactions
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM transactions_all_clients WHERE  status=?");
+                preparedStatement.setString(1,"inRealisation");
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == quitButton) {
-                parent.setVisible(true);
-                dispose();
+
+
+                ResultSet set = preparedStatement.executeQuery();
+                while (set.next()) {
+                    String transaction = String.format("Client ID: %d, Name: %s %s, Drug: %s, Price: %d, Order ID: %d, Date: %s",
+                            set.getInt(1),
+                            set.getString(2),
+                            set.getString(3),
+                            set.getString(4),
+                            set.getInt(7),
+                            set.getInt(8),
+                            set.getTimestamp(9)
+                    );
+                    listModel.addElement(transaction);
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Brak transakcji do pokazania");
             }
         }
 
     }
-}
+
+    }
+
+
 

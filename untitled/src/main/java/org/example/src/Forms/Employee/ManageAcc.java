@@ -53,7 +53,7 @@ public class ManageAcc extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == acceptButton){
-            parent.updateCredentials(firstNameField.getText(), lastNameField.getText(), addressField.getText(), cityTextField.getText());
+            parent.updateCredentials(textField1.getText(), lastNameField.getText(), addressField.getText(), cityTextField.getText(),firstNameField.getText());
             dispose();
             parent.setVisible(true);
         }
@@ -91,30 +91,6 @@ public class ManageAcc extends JFrame implements ActionListener {
         }
     }
 
-    private class YesButtonActionListener implements ActionListener {
-        private final JFrame parent;
 
-        private YesButtonActionListener(JFrame parent) {
-            this.parent = parent;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-//            Forms.Client.ClientCredentialsForm.this.parent.deleteAccount();
-            parent.dispose();
-        }
-    }
-
-    private class NoButtonActionListener implements ActionListener {
-        private final JFrame parent;
-
-        private NoButtonActionListener(JFrame parent) {
-            this.parent = parent;
-        }
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            parent.dispose();
-        }
-    }
 
 }

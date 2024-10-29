@@ -135,7 +135,14 @@ public class OrderMeds extends JFrame implements ActionListener {
             }
 //
 //            System.out.println(comboBox1.getSelectedItem());
+
+            //nowa array dla lekow w realizacji itd.
+            if(availableCards.size()<30)
             parent.addCardToAccount((Medicine) comboBox1.getSelectedItem());
+            else{
+                JOptionPane.showMessageDialog(this, "Za dużo zamówień, do konta może być przypisanych łączenie maksymalnie 29 leków, usuń jakieś produkty");
+
+            }
 //
 
 
@@ -150,7 +157,7 @@ public class OrderMeds extends JFrame implements ActionListener {
 //            dataList.toArray(data);
             try {
                 parent.connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
-                PreparedStatement preparedStatement = parent.connection.prepareStatement("SELECT `drug_id`,`client_id`,`id`   FROM drugs_and_clients WHERE `client_id` = ?");
+                PreparedStatement preparedStatement = parent.connection.prepareStatement("SELECT `drug_id`,`id`,`transaciont_id`, `drug_name`,`producent`,`price` ,`status` FROM client_and_drug_all_info_fixed WHERE `id` = ?");
                 preparedStatement.setInt(1, parent.clientId);
                 ResultSet resultSet = preparedStatement.executeQuery();
                 int i=0;
@@ -159,7 +166,7 @@ public class OrderMeds extends JFrame implements ActionListener {
 //                medicines.add(new Medicine(resultSet.getString(1), resultSet.getDate(2), resultSet.getString(3)));
                 }
                 while (resultSet.next()) {
-                    parent.medicines.add(new Medicine(Integer.parseInt(resultSet.getString(1)), Integer.parseInt(resultSet.getString(2)), Integer.parseInt(resultSet.getString(3))));
+                    parent.medicines.add(new Medicine(Integer.parseInt(resultSet.getString(1)), Integer.parseInt(resultSet.getString(2)), Integer.parseInt(resultSet.getString(3)),resultSet.getString(4),resultSet.getString(5), resultSet.getInt(6),Medicine.OrderStatus.valueOf(resultSet.getString(7))));
 //                medicines.add(new Medicine(resultSet.getString(1), resultSet.getDate(2), resultSet.getString(3)));
                 }
             }catch (Exception s){
