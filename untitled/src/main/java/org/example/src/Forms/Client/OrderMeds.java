@@ -5,8 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -88,7 +86,6 @@ public class OrderMeds extends JFrame implements ActionListener {
         parent = employee;
 
         quitButton.addActionListener(this);
-        deleteButton.addActionListener(this);
         searchButton.addActionListener(this);
         orderMedButton.addActionListener(this);
 
@@ -179,53 +176,7 @@ public class OrderMeds extends JFrame implements ActionListener {
 
         }
 
-            if(e.getSource() == deleteButton){
-            JFrame frame = new JFrame();
-            JPanel jPanel = new JPanel();
-            jPanel.setBackground(new Color(24, 26, 48));
-            JLabel label = new JLabel("Czy na pewno chcesz usunąć konto?");
-            label.setForeground(new Color(255, 255, 255));
-            JButton yesButton = new JButton("Tak");
-            JButton noButton = new JButton("Nie");
 
-            jPanel.add(label);
-            jPanel.add(yesButton);
-            jPanel.add(noButton);
-
-
-
-            addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent windowEvent) {
-                    parent.setVisible(true);
-                }
-            });
-
-            noButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {frame.dispose(); // Close the current JFrame
-                }
-            });
-            yesButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    parent.deleteAcc(((String) comboBox1.getSelectedItem()), parent.getConnection());
-
-                    ;
-
-
-
-                    frame.dispose(); // Close the current JFrame
-                }
-            });
-
-
-
-            frame.setContentPane(jPanel);
-
-            frame.pack();
-            frame.setVisible(true);
-        }
     }
 
     private class YesButtonActionListener implements ActionListener {

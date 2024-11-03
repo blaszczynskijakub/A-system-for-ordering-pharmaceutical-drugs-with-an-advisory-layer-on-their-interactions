@@ -19,17 +19,13 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     private JButton manageCardsButton;
     private JButton changeAccountDetailsButton;
     private JButton transferMoneyButton;
-    private JButton loanButton;
     private JPanel jPanel;
     private JLabel mainLabel;
     private JLabel nameLabel;
-    private JLabel balanceLabel;
     private JLabel accountNumberLabel;
     private JLabel nameFillLabel;
-    private JLabel balanceFillLabel;
     private JLabel accountFillLabel;
     private JLabel titleLabel;
-    private JButton transactionsHistoryButton;
     private JList eatSchedule;
 
 
@@ -38,8 +34,6 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     private String address;
     private String city;
     public final int clientId;
-    private final int accountId;
-    private final String accountNumber;
 
 
     private double balance;
@@ -50,7 +44,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     private ResultSet resultSet;
 
 
-    public Client(int clientId, String firstName, String lastName, String address, String city, Double balance, String accountNumber, int accountId) {
+    public Client(int clientId, String firstName, String lastName, String address, String city ) {
         medicines = new ArrayList<>();
         try {
             connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
@@ -76,8 +70,6 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         this.city = city;
         this.clientId = clientId;
         this.balance = balance;
-        this.accountNumber = accountNumber;
-        this.accountId = accountId;
         setTitle("Aplikacja Klienta");
         setSize(300, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -87,11 +79,8 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         manageCardsButton.addActionListener(this);
         changeAccountDetailsButton.addActionListener(this);
         transferMoneyButton.addActionListener(this);
-        loanButton.addActionListener(this);
-        transactionsHistoryButton.addActionListener(this);
 
         nameFillLabel.setText(firstName + " " + lastName);
-        balanceFillLabel.setText(String.valueOf(balance));
 
 
         Timer clockTimer = new Timer(1000, new ActionListener() {
@@ -117,15 +106,10 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         } else if (e.getSource() == transferMoneyButton) {
             setVisible(false);
             new OrderMeds(this);
-        } else if (e.getSource() == loanButton) {
-            setVisible(false);
-            new QuestionToEmploForm(this);
         } else if (e.getSource() == manageCardsButton) {
             setVisible(false);
-            new CurrentMedicinesForm(this);
-        } else if (e.getSource() == transactionsHistoryButton) {
-            setVisible(false);
-            new transactionsFrame(this);
+            new CurrentMedicinesForm(this, connection);
+
         }
 
     }
@@ -153,28 +137,32 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     }
 
     protected void deleteAccount() {
-        PreparedStatement deleteCards;
-        PreparedStatement deleteAccount;
-        PreparedStatement deleteClient;
-        try {
-            deleteCards = connection.prepareStatement("DELETE FROM drugs WHERE client_id = ?");
-            deleteAccount = connection.prepareStatement("DELETE FROM medicines WHERE client_id = ?");
-            deleteClient = connection.prepareStatement("DELETE FROM clients WHERE id = ?");
+        PreparedStatement deleteDrugs = null;
+        PreparedStatement deleteClient = null;
 
-            deleteCards.setInt(1, this.clientId);
-            deleteAccount.setInt(1, this.clientId);
+        try {
+
+            try {
+                deleteDrugs = connection.prepareStatement("DELETE FROM drugs_and_clients WHERE client_id = ?");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                deleteClient = connection.prepareStatement("DELETE FROM clients WHERE id = ?");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println(this.clientId);
+            deleteDrugs.setInt(1, this.clientId);
             deleteClient.setInt(1, this.clientId);
 
-            deleteCards.executeUpdate();
-            deleteAccount.executeUpdate();
-            deleteClient.executeUpdate();
+            deleteDrugs.executeUpdate(); // First delete from drugs_and_clients
+            deleteClient.executeUpdate(); // Then delete from clients
+
 
         } catch (SQLException e) {
-            System.out.println(e);
-            return;
+            throw new RuntimeException(e);
         }
-
-        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
     public boolean makeTransaction(boolean standard, double amount, String receiver, OrderMeds form) {
@@ -186,7 +174,6 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         try {
             insertTransaction = connection.prepareStatement("INSERT INTO transactions(amount, type_id, account_id, transaction_date) VALUES (?, ?, ?, ?)");
             insertTransaction.setDouble(1, amount);
-            insertTransaction.setInt(3, accountId);
 
             if (standard) {
                 transactionTypeId = 2;
@@ -260,7 +247,6 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         }
 
         nameFillLabel.setText(firstName + " " + lastName);
-        balanceFillLabel.setText(String.valueOf(balance));
         repaint();
     }
 
@@ -318,34 +304,20 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         JOptionPane.showMessageDialog(this, "Pommelling dodano kartę");
     }
 
-    public void deleteCard(int cardIndex) {
-
-        if (showYesNoPopup("Czy jesteś pewien usunięcia tego leku? Tej operacji nie da się cofnąć. Nie wpłynie to na realizację zamówienia, jedynie na możliwość jego śledzenia.")) {
+    public void deleteCard(Medicine cardIndex) {
+        if (showYesNoPopup("Are you sure you want to delete this medicine? This action cannot be undone.")) {
+            Medicine card = cardIndex;
             try {
-                connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-
-            Medicine card = medicines.get(cardIndex);
-            try {
-
                 PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM drugs_and_clients WHERE drug_id = ? AND client_id= ? AND id= ?");
-                System.out.println(Integer.valueOf(card.drug_id));
-
-                System.out.println(Integer.valueOf(card.client_id));
                 preparedStatement.setInt(1, card.drug_id);
                 preparedStatement.setInt(2, card.client_id);
                 preparedStatement.setInt(3, card.id);
-
-
-                preparedStatement.execute();
+                preparedStatement.executeUpdate();
                 medicines.remove(cardIndex);
-                JOptionPane.showMessageDialog(this, "Pomyślnie usunięto kartę");
+                JOptionPane.showMessageDialog(this, "Successfully deleted the card.");
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage());
             }
-
         }
     }
 
@@ -369,9 +341,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         return balance;
     }
 
-    public String getAccountNumber() {
-        return accountNumber;
-    }
+
 
     public ArrayList<Medicine> getCreditCards() {
         return medicines;

@@ -5,8 +5,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
-public class OrderMeds extends JFrame implements ActionListener {
+public class DeleteUser extends JFrame implements ActionListener {
     private JPanel mainPanel;
     private JLabel mainLabel;
     private JLabel firstNameLabel;
@@ -68,11 +69,11 @@ public class OrderMeds extends JFrame implements ActionListener {
             frame.setVisible(true);
         }
         else {
-//            ArrayList<String> items = parent.populateComboBox(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet(),parent.);
-//            comboBox1.setModel(new DefaultComboBoxModel<>(items.toArray(new String[0])));
+            ArrayList<String> items = parent.populateComboBoxWithNames(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet());
+            comboBox1.setModel(new DefaultComboBoxModel<>(items.toArray(new String[0])));
         }
     }
-    public OrderMeds(Employee employee) {
+    public DeleteUser(Employee employee) {
         parent = employee;
 
         quitButton.addActionListener(this);
@@ -142,7 +143,8 @@ public class OrderMeds extends JFrame implements ActionListener {
             yesButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    parent.deleteAcc(((String) comboBox1.getSelectedItem()), parent.getConnection());
+                    System.out.println(comboBox1.getSelectedItem());
+                    parent.deleteAccount(Integer.parseInt(comboBox1.getSelectedItem().toString().split(" ")[comboBox1.getSelectedItem().toString().split(" ").length-1]));
 
                     ;
 
@@ -170,7 +172,7 @@ public class OrderMeds extends JFrame implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            OrderMeds.this.parent.deleteAccount();
+//            DeleteUser.this.parent.deleteAccount();
             parent.dispose();
         }
     }

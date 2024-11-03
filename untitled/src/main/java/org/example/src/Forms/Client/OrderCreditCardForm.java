@@ -54,7 +54,7 @@ public class OrderCreditCardForm extends JFrame implements ActionListener {
             String[] data = new String[dataList.size()];
             dataList.toArray(data);
 
-            cardsForm.getList3().setListData(data);
+//            cardsForm.getList3().setListData(data);
             cardsForm.repaint();
 
             dispose();

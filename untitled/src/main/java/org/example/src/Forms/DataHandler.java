@@ -54,6 +54,47 @@ public interface DataHandler {
 
     }
 
+    default ArrayList<String> populateComboBoxWithNames(String dane, PreparedStatement preparedStatement, Connection connection, ResultSet resultSet) {
+        try {
+
+
+//            String query = "SELECT drug_name FROM drugs WHERE first_name=? AND last_name=? ";
+            String query;
+                query = "SELECT * FROM clients WHERE first_name like ? or last_name like ? or first_name like ? or last_name like ? ";
+
+
+
+
+
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, dane.split(" ")[0]+"%");
+            preparedStatement.setString(2, dane.split(" ")[0]+"%");
+            preparedStatement.setString(3, dane.split(" ")[1]+"%");
+            preparedStatement.setString(4, dane.split(" ")[1]+"%");
+
+            resultSet = preparedStatement.executeQuery();
+
+            // Populate the comboBox1 with the fetched data
+            ArrayList<String> items = new ArrayList<>();
+            while (resultSet.next()) {
+//                items.add("nazwa: " + resultSet.getString("drug_name") + ", producent: " + resultSet.getString("producent_name")+ " , cena: "+resultSet.getString("price")+" pln"+ " "+resultSet.getString("id"));
+                items.add("imię i nazwisko: "+resultSet.getString("first_name")+" "+resultSet.getString("last_name")+" "+"adres: "+resultSet.getString("address")+", "+resultSet.getString("city")+" id: "+resultSet.getString("id"));
+            }
+            // Add items to comboBox1
+
+            // Close the resources
+            resultSet.close();
+            preparedStatement.close();
+            return items;
+
+
+
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
+        }
+
+    }
+
 
     default public void deleteAcc(String dane, Connection connection) {
         try {

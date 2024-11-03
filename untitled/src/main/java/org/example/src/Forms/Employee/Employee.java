@@ -36,7 +36,6 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
 
     private PreparedStatement preparedStatement;
     private JButton closeAccButton;
-    private JButton loanButton;
     private JPanel jPanel;
     private JLabel mainLabel;
     private JLabel nameLabel;
@@ -51,6 +50,8 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     private JLabel adresOddzialuLabel;
     private JLabel label1;
     private JButton controlOrdersButton;
+    private JButton editDrugsButton;
+    private JButton addAccButton;
 
 
     private String firstName;
@@ -84,9 +85,10 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
 
         setContentPane(jPanel);
         closeAccButton.addActionListener(this);
-        loanButton.addActionListener(this);
         changeDataButton.addActionListener(this);
         controlOrdersButton.addActionListener(this);
+        editDrugsButton.addActionListener(this);
+        addAccButton.addActionListener(this);
 
         nameFillLabel.setText(firstName + " " + lastName);
         positionFillLabel.setText(position);
@@ -99,29 +101,42 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == loanButton) {
-            setVisible(false);
-            new LoanAva(this);
-        } else if (e.getSource() == changeDataButton) {
+        if (e.getSource() == changeDataButton) {
             setVisible(false);
             new ManageAcc(this);
         } else if (e.getSource() == closeAccButton) {
             setVisible(false);
-            new OrderMeds(this);
+            new DeleteUser(this);
         }
         else if (e.getSource() == controlOrdersButton) {
             setVisible(false);
             System.out.println(123);
             new TransactionsFrame(this, connection);
         }
-//        else if(e.getSource() == manageCardsButton){
-//            setVisible(false);
-//            new CreditCardsForm(this);
-//        }
-//        else if(e.getSource() == transactionsHistoryButton){
-//            setVisible(false);
-//            new Client.transactionsFrame(this);
-//        }
+        else if(e.getSource() == editDrugsButton){
+            setVisible(false);
+            new DrugListForEmplo(this,connection);
+        }
+        else if(e.getSource() == addAccButton){
+            setVisible(false);
+                String drugName = JOptionPane.showInputDialog(this, "Wprowadź imię:");
+                String producentName = JOptionPane.showInputDialog(this, "Wprowadź nazwisko:");
+                String drugType = JOptionPane.showInputDialog(this, "Wprowadź miasto:");
+                String price = JOptionPane.showInputDialog(this, "Wprowadź adres:");
+
+                try {
+                    String query = "INSERT INTO clients (first_name, last_name, address, city) VALUES (?, ?, ?, ?)";
+                    PreparedStatement preparedStatement = connection.prepareStatement(query);
+                    preparedStatement.setString(1, drugName);
+                    preparedStatement.setString(2, producentName);
+                    preparedStatement.setString(4, drugType);
+                    preparedStatement.setString(3, price);
+                    preparedStatement.executeUpdate();
+                } catch (SQLException d) {
+                    JOptionPane.showMessageDialog(this, "Nie udało się dodać leku");
+                }
+            }
+
 
     }
 
@@ -147,32 +162,37 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
         updateClientInfo();
     }
 
-    public void deleteAccount() {
-        PreparedStatement deleteCards = null;
-        PreparedStatement deleteAccount = null;
+    public void deleteAccount(int id) {
+        PreparedStatement deleteDrugs = null;
         PreparedStatement deleteClient = null;
+
         try {
-            deleteCards = connection.prepareStatement("DELETE FROM credit_card WHERE client_id = ?");
-            deleteAccount = connection.prepareStatement("DELETE FROM medicines WHERE client_id = ?");
-            deleteClient = connection.prepareStatement("DELETE FROM clients WHERE id = ?");
 
-            deleteCards.setInt(1, this.employeeId);
-            deleteAccount.setInt(1, this.employeeId);
-            deleteClient.setInt(1, this.employeeId);
+            try {
+                deleteDrugs = connection.prepareStatement("DELETE FROM drugs_and_clients WHERE client_id = ?");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                deleteClient = connection.prepareStatement("DELETE FROM clients WHERE id = ?");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println(id);
+            deleteDrugs.setInt(1, id);
+            deleteClient.setInt(1, id);
 
-            deleteCards.executeUpdate();
-            deleteAccount.executeUpdate();
-            deleteClient.executeUpdate();
+            deleteDrugs.executeUpdate(); // First delete from drugs_and_clients
+            deleteClient.executeUpdate(); // Then delete from clients
+
 
         } catch (SQLException e) {
-            System.out.println(e);
-            return;
+            throw new RuntimeException(e);
         }
-
-        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
 
-    protected boolean makeTransaction(boolean standard, double amount, String receiver, org.example.src.Forms.Employee.OrderMeds form) {
+
+    protected boolean makeTransaction(boolean standard, double amount, String receiver, DeleteUser form) {
         PreparedStatement insertTransaction = null;
         PreparedStatement subtractExpressCost = null;
         java.util.Date javaDate = new java.util.Date();
@@ -437,8 +457,12 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
             changeStatus = new JButton("Zmień status na 'w dostawie'");
             changeStatus.addActionListener(e -> {
 
-                String newStatus=transactionsList.getSelectedValue().split(" ")[13].replace(",","");
 
+                int startIndex = transactionsList.getSelectedValue().indexOf("Order ID:") + 10; // Start after "Order ID:"
+                int endIndex = transactionsList.getSelectedValue().indexOf("Date:");
+
+                String orderIdString = transactionsList.getSelectedValue().substring(startIndex, endIndex).trim(); // Extract the order ID as a string
+                int orderId = Integer.parseInt(orderIdString.replace(",","")); // Parse to integer
 
                 String queryFirst = "UPDATE  drugs_and_clients SET status='taken' WHERE  id=?";
 
@@ -449,7 +473,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
                     throw new RuntimeException(ex);
                 }
                 try {
-                    preparedStatementFirst.setInt(1, Integer.parseInt(newStatus));
+                    preparedStatementFirst.setInt(1, orderId);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 }

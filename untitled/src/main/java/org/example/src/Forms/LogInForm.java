@@ -95,8 +95,7 @@ public class LogInForm extends JFrame implements ActionListener {
                 while (set.next()) {
                     if ((set.getString(2) + " " + set.getString(3)).equalsIgnoreCase(username)) {
                         new Client(set.getInt(1), set.getString(2), set.getString(3),
-                                set.getString(4), set.getString(5), set.getDouble(6),
-                                set.getString(7), set.getInt(8));
+                                set.getString(4), set.getString(5));
                         return true;
                     }
                 }
