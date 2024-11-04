@@ -1,6 +1,7 @@
 package org.example.src.Forms.Client;
 
 import org.example.src.Forms.DataHandler;
+import org.example.src.Forms.LogInForm;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -27,6 +28,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     private JLabel accountFillLabel;
     private JLabel titleLabel;
     private JList eatSchedule;
+    private JButton logOutButton;
 
 
     private String firstName;
@@ -47,7 +49,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     public Client(int clientId, String firstName, String lastName, String address, String city ) {
         medicines = new ArrayList<>();
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
+            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "#hom^ik34");
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT `drug_id`,`id`,`transaciont_id`, `drug_name`,`producent`,`price` , `status`  FROM client_and_drug_all_info_fixed WHERE `id` = ?");
             preparedStatement.setInt(1, clientId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -79,6 +81,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         manageCardsButton.addActionListener(this);
         changeAccountDetailsButton.addActionListener(this);
         transferMoneyButton.addActionListener(this);
+        logOutButton.addActionListener(this);
 
         nameFillLabel.setText(firstName + " " + lastName);
 
@@ -109,6 +112,10 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         } else if (e.getSource() == manageCardsButton) {
             setVisible(false);
             new CurrentMedicinesForm(this, connection);
+
+        }else if (e.getSource() == logOutButton) {
+            setVisible(false);
+            new LogInForm();
 
         }
 

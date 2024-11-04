@@ -28,7 +28,7 @@ public class LogInForm extends JFrame implements ActionListener {
 
     private void initializeDatabaseConnection() {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
+            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "#hom^ik34");
         } catch (Exception e) {
             System.out.println(e);
         }

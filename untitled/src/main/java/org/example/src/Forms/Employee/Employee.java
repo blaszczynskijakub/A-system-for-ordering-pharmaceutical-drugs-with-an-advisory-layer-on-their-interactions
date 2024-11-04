@@ -2,6 +2,7 @@ package org.example.src.Forms.Employee;
 
 
 import org.example.src.Forms.DataHandler;
+import org.example.src.Forms.LogInForm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +53,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     private JButton controlOrdersButton;
     private JButton editDrugsButton;
     private JButton addAccButton;
+    private JButton logOutButton;
 
 
     private String firstName;
@@ -66,7 +68,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
 
     public Employee(int employeeId, String firstName, String lastName, String position, String branchName, String branchAdress) {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
+            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "#hom^ik34");
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -89,6 +91,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
         controlOrdersButton.addActionListener(this);
         editDrugsButton.addActionListener(this);
         addAccButton.addActionListener(this);
+        logOutButton.addActionListener(this);
 
         nameFillLabel.setText(firstName + " " + lastName);
         positionFillLabel.setText(position);
@@ -116,9 +119,11 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
         else if(e.getSource() == editDrugsButton){
             setVisible(false);
             new DrugListForEmplo(this,connection);
+        } else if(e.getSource() == logOutButton){
+            setVisible(false);
+            new LogInForm();
         }
         else if(e.getSource() == addAccButton){
-            setVisible(false);
                 String drugName = JOptionPane.showInputDialog(this, "Wprowadź imię:");
                 String producentName = JOptionPane.showInputDialog(this, "Wprowadź nazwisko:");
                 String drugType = JOptionPane.showInputDialog(this, "Wprowadź miasto:");

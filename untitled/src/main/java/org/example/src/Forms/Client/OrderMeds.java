@@ -153,7 +153,7 @@ public class OrderMeds extends JFrame implements ActionListener {
 //            String[] data = new String[dataList.size()];
 //            dataList.toArray(data);
             try {
-                parent.connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "ColGate1978");
+                parent.connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "#hom^ik34");
                 PreparedStatement preparedStatement = parent.connection.prepareStatement("SELECT `drug_id`,`id`,`transaciont_id`, `drug_name`,`producent`,`price` ,`status` FROM client_and_drug_all_info_fixed WHERE `id` = ?");
                 preparedStatement.setInt(1, parent.clientId);
                 ResultSet resultSet = preparedStatement.executeQuery();

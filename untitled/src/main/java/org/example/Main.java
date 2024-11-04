@@ -22,7 +22,7 @@ public class Main {
         if(args[3].equals("C")) {
             try {
                 //Class.forName("com.mysql.cj.jdbc.Driver");
-                connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/projekt_banku", "root", "root");
+                connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/projekt_banku", "root", "#hom^ik34");
                 statement = connection.createStatement();
 
                 PreparedStatement preparedStatement = connection.prepareStatement("select * from clients_info_view where id = ?");
@@ -43,7 +43,7 @@ public class Main {
         }    if(args[3].equals("E")) {
             try {
                 //Class.forName("com.mysql.cj.jdbc.Driver");
-                connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/projekt_banku", "root", "root");
+                connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/projekt_banku", "root", "#hom^ik34");
                 statement = connection.createStatement();
 
                 PreparedStatement preparedStatement = connection.prepareStatement("select * from employees_info_view where id = ?");
