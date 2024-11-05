@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.util.Arrays;
 
 public class LogInForm extends JFrame implements ActionListener {
     private JPanel mainPanel;
@@ -46,14 +47,18 @@ public class LogInForm extends JFrame implements ActionListener {
 
     public void handleLogin() {
         String enteredUsername = loginField.getText();
-        String enteredPassword = String.valueOf(passwordField.getPassword());
+        char[] enteredPassword = passwordField.getPassword();
 
-        if (validateEmployeeLogin(enteredUsername, enteredPassword)) {
-            userType = "EMPLOYEE";
-        } else if (validateClientLogin(enteredUsername, enteredPassword)) {
-            userType = "CLIENT";
-        } else {
-            JOptionPane.showMessageDialog(this, "Niepoprawne dane logowania");
+        try {
+            if (validateEmployeeLogin(enteredUsername, enteredPassword)) {
+                userType = "EMPLOYEE";
+            } else if (validateClientLogin(enteredUsername, Arrays.toString(enteredPassword))) {
+                userType = "CLIENT";
+            } else {
+                JOptionPane.showMessageDialog(this, "Niepoprawne dane logowania");
+            }
+        } finally {
+            java.util.Arrays.fill(enteredPassword, ' ');
         }
 
         if (!userType.isEmpty()) {
@@ -61,22 +66,33 @@ public class LogInForm extends JFrame implements ActionListener {
         }
     }
 
-    private boolean validateEmployeeLogin(String username, String password) {
-        if (password.equalsIgnoreCase("PRACOWNIK")) {
-            try (Statement statement = connection.createStatement()) {
-                ResultSet set = statement.executeQuery("SELECT * FROM employees_info_view");
-                while (set.next()) {
-                    if ((set.getString(2) + " " + set.getString(3)).equalsIgnoreCase(username)) {
-                        new Employee(set.getInt(1), set.getString(2), set.getString(3), set.getString(4), set.getString(5), set.getString(6),connection);
-                        return true;
-                    }
+
+    private boolean validateEmployeeLogin(String username, char[] password) {
+        try (PreparedStatement statement = connection.prepareStatement(
+                "SELECT id, first_name, last_name, department_id, position, password_hash FROM employees WHERE CONCAT(first_name, ' ', last_name) = ?")) {
+            statement.setString(1, username);
+            ResultSet set = statement.executeQuery();
+
+            if (set.next()) {
+                String storedHash = set.getString("password_hash");
+
+                boolean passwordMatch = PasswordUtils.checkPassword(new String(password), storedHash);
+                java.util.Arrays.fill(password, ' ');
+
+                if (passwordMatch) {
+                    new Employee(set.getInt("id"), set.getString("first_name"), set.getString("last_name"),
+                            set.getString("position"), "pass", "pass", connection);
+                    return true;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Nieprawidłowe dane logowania");
                 }
-            } catch (SQLException exception) {
-                System.out.println(exception);
             }
+        } catch (SQLException exception) {
+            System.out.println("Błąd bazy danych: " + exception);
         }
         return false;
     }
+
 
     private boolean validateClientLogin(String username, String password) {
         try (PreparedStatement statement = connection.prepareStatement(
