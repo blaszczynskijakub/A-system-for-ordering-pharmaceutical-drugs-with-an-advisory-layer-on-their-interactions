@@ -16,47 +16,52 @@ public class Medicine {
 
     private OrderStatus orderStatus = OrderStatus.inRealisation;
 
-    public int drug_id;
-    public int client_id;
-    public int id;
-    public String drug_name, producent;
-    public int price;
+    private final int drugId;
+    private final int clientId;
+    private int transactionId;
+    private final String drugName;
+    private final String producent;
+    private final int price;
 
     // Constructor with all fields
-    public Medicine(int drug_id, int client_id, int id, String drug_name, String producent, int price, OrderStatus status) {
-        this.drug_name = drug_name;
+    public Medicine(int drugId, int clientId, int transactionId, String drugName, String producent, int price, OrderStatus status) {
+        this.drugName = drugName;
         this.producent = producent;
         this.price = price;
-        this.drug_id = drug_id;
-        this.client_id = client_id;
-        this.id = id;
+        this.drugId = drugId;
+        this.clientId = clientId;
+        this.transactionId = transactionId;
 
         this.orderStatus = status;
     }
 
-    // Constructor with only drug_id (other fields default to 0 or -1)
-    public Medicine(int drug_id, String drug_name, String producent, int price, OrderStatus status) {
-        this.drug_name = drug_name;
+    // Constructor with only drug_id for combobox filling(other fields default to 0 or -1)
+    public Medicine(int drugId, String drugName, String producent, int price, OrderStatus status) {
+        this.drugName = drugName;
         this.producent = producent;
         this.price = price;
-        this.drug_id = drug_id;
-        this.client_id = -1;  // Default value, can be changed as needed
-        this.id = -1;         // Default value, can be changed as needed
+        this.drugId = drugId;
+        this.clientId = -1;
+        this.transactionId = -1;
     }
 
-    // Getters and Setters
 
-    public int getId() {
-        return id;
+    public int getTransactionId() {
+        return transactionId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getDrugId() {
+        return drugId;
     }
+
+    public int getClientId() {
+        return clientId;
+    }
+
 
     @Override
     public String toString() {
-        return drug_name + ", " + producent + ", " + price + " PLN";
+        return drugName + ", " + producent + ", " + price + " PLN";
     }
 
     public OrderStatus getOrderStatus() {
@@ -64,7 +69,7 @@ public class Medicine {
     }
 
     // Static method to generate list of medicines
-    public static ArrayList<Medicine> generateCards(Connection connection, int client_id) throws SQLException {
+    static ArrayList<Medicine> generateCards(Connection connection, int client_id) throws SQLException {
         ArrayList<Medicine> availableCards = new ArrayList<Medicine>();
         ResultSet resultSet = null;
         try {
@@ -75,15 +80,13 @@ public class Medicine {
 
             resultSet = preparedStatement.executeQuery();
 
-            // Iterate through the result set and add data to availableCards
             while (resultSet.next()) {
                 availableCards.add(new Medicine(Integer.parseInt(resultSet.getString(1)), Integer.parseInt(resultSet.getString(2)), Integer.parseInt(resultSet.getString(3)), resultSet.getString(4), resultSet.getString(5), resultSet.getInt(6), OrderStatus.valueOf(resultSet.getString(7))));
             }
-
-            // This adds a default card if the result set is empty
+            //avoiding to be null
             availableCards.add(new Medicine(150, 1, -1, "d", "d", -1, OrderStatus.inRealisation));
         } catch (SQLException e) {
-            e.printStackTrace(); // Better error logging
+            e.printStackTrace();
         }
 
         return availableCards;

@@ -1,4 +1,4 @@
-package org.example.src.Forms;
+package org.example.src.Forms.logging;
 
 import org.example.src.Forms.Client.Client;
 import org.example.src.Forms.Employee.Employee;
@@ -26,13 +26,6 @@ public class LogInForm extends JFrame implements ActionListener {
         setupUI();
     }
 
-    private void initializeDatabaseConnection() {
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "#hom^ik34");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
 
     private void setupUI() {
         setTitle("Logowanie");
@@ -57,10 +50,8 @@ public class LogInForm extends JFrame implements ActionListener {
 
         if (validateEmployeeLogin(enteredUsername, enteredPassword)) {
             userType = "EMPLOYEE";
-            // Employee logic here...
         } else if (validateClientLogin(enteredUsername, enteredPassword)) {
             userType = "CLIENT";
-            // Client logic here...
         } else {
             JOptionPane.showMessageDialog(this, "Niepoprawne dane logowania");
         }
@@ -76,8 +67,7 @@ public class LogInForm extends JFrame implements ActionListener {
                 ResultSet set = statement.executeQuery("SELECT * FROM employees_info_view");
                 while (set.next()) {
                     if ((set.getString(2) + " " + set.getString(3)).equalsIgnoreCase(username)) {
-                        new Employee(set.getInt(1), set.getString(2), set.getString(3),
-                                set.getString(4), set.getString(5), set.getString(6));
+                        new Employee(set.getInt(1), set.getString(2), set.getString(3), set.getString(4), set.getString(5), set.getString(6),connection);
                         return true;
                     }
                 }
@@ -89,25 +79,37 @@ public class LogInForm extends JFrame implements ActionListener {
     }
 
     private boolean validateClientLogin(String username, String password) {
-        if (password.equalsIgnoreCase("KLIENT")) {
-            try (Statement statement = connection.createStatement()) {
-                ResultSet set = statement.executeQuery("SELECT * FROM clients_info_view");
-                while (set.next()) {
-                    if ((set.getString(2) + " " + set.getString(3)).equalsIgnoreCase(username)) {
-                        new Client(set.getInt(1), set.getString(2), set.getString(3),
-                                set.getString(4), set.getString(5));
-                        return true;
-                    }
+        try (PreparedStatement statement = connection.prepareStatement(
+                "SELECT password_hash, id, first_name, last_name, address, city FROM clients WHERE CONCAT(first_name, ' ', last_name) = ?")) {
+            statement.setString(1, username);
+            ResultSet set = statement.executeQuery();
+
+            if (set.next()) {
+                String storedHash = set.getString("password_hash");
+
+                if (PasswordUtils.checkPassword(password, storedHash)) {
+                    new Client(set.getInt("id"), set.getString("first_name"), set.getString("last_name"), set.getString("address"), set.getString("city"),connection);
+                    return true;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Nieprawidłowe dane logowania");
                 }
-            } catch (SQLException exception) {
-                System.out.println(123);
-                System.out.println(exception);
             }
+        } catch (SQLException exception) {
+            System.out.println("Błąd bazy danych: " + exception);
         }
         return false;
     }
 
-    // Getter and Setter for testing purposes
+    private void initializeDatabaseConnection() {
+        try {
+            String dbUrl = System.getenv("DB_URL");
+            String dbUser = System.getenv("DB_USER");
+            String dbPassword = System.getenv("DB_PASSWORD");
+            connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+        } catch (Exception e) {
+            System.out.println("Błąd przy nawiązywaniu połączenia: " + e);
+        }
+    }
     public String getUserType() {
         return userType;
     }
@@ -116,7 +118,6 @@ public class LogInForm extends JFrame implements ActionListener {
         this.connection = connection;
     }
 
-    // Getters for UI elements for testing
     public JTextField getLoginField() {
         return loginField;
     }
@@ -125,7 +126,4 @@ public class LogInForm extends JFrame implements ActionListener {
         return passwordField;
     }
 
-    public JButton getLoginButton() {
-        return loginButton;
-    }
 }

@@ -1,6 +1,6 @@
 package org.example.src.Forms.Client;
 
-import org.example.src.Forms.LogInForm;
+import org.example.src.Forms.logging.LogInForm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,110 +27,133 @@ public class ClientCredentialsForm extends JFrame implements ActionListener {
 
     public ClientCredentialsForm(Client client) {
         this.parent = client;
+        initializeUI();
+        initializeFieldsWithData();
+        addWindowCloseListener();
+        setVisible(true);
+    }
 
-        // Initialize fields with client's data
-        firstNameField.setText(client.getFirstName());
-        lastNameField.setText(client.getLastName());
-        addressField.setText(client.getAddress());
-        cityTextField.setText(client.getCity());
+    private void initializeUI() {
+        setTitle("Dane klienta");
+        setContentPane(mainPanel);
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setUpButtonListeners();
+        pack();
+    }
 
-        // Set up action listeners for buttons
+    private void initializeFieldsWithData() {
+        firstNameField.setText(parent.getFirstName());
+        lastNameField.setText(parent.getLastName());
+        addressField.setText(parent.getAddress());
+        cityTextField.setText(parent.getCity());
+    }
+
+    private void setUpButtonListeners() {
         acceptButton.addActionListener(this);
         quitButton.addActionListener(this);
         deleteButton.addActionListener(this);
+    }
 
-        // Handle window closing
+    private void addWindowCloseListener() {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 parent.setVisible(true);
             }
         });
-
-        setContentPane(mainPanel);
-        setVisible(true);
-        pack();
-    }
-
-    public JPanel getMainPanel() {
-        return mainPanel;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == acceptButton) {
-            // Update client credentials and close form
-            parent.updateCredentials(
-                    firstNameField.getText(),
-                    lastNameField.getText(),
-                    addressField.getText(),
-                    cityTextField.getText()
-            );
-            dispose();
-            parent.setVisible(true);
+            updateClientDataAndClose();
         } else if (e.getSource() == quitButton) {
-            // Close form and return to parent
-            dispose();
-            parent.setVisible(true);
+            closeForm();
         } else if (e.getSource() == deleteButton) {
-            // Show confirmation dialog for account deletion
             showDeleteConfirmationDialog();
         }
     }
 
+    private void updateClientDataAndClose() {
+        parent.updateCredentials(
+                firstNameField.getText(),
+                lastNameField.getText(),
+                addressField.getText(),
+                cityTextField.getText()
+        );
+        closeForm();
+    }
+
+    private void closeForm() {
+        dispose();
+        parent.setVisible(true);
+    }
+
     private void showDeleteConfirmationDialog() {
-        // Create a modal JDialog for confirmation
+        JDialog confirmationDialog = createConfirmationDialog();
+        confirmationDialog.setVisible(true);
+    }
+
+    private JDialog createConfirmationDialog() {
         JDialog dialog = new JDialog(this, "Confirm Deletion", true);
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
         panel.setBackground(new Color(24, 26, 48));
 
-        JLabel label = new JLabel("Czy na pewno chcesz usunąć konto?");
+        JLabel label = new JLabel("Czy na pewno chcesz usunąć konto?", JLabel.CENTER);
         label.setForeground(Color.WHITE);
-        JButton yesButton = new JButton("Tak");
-        JButton noButton = new JButton("Nie");
-
         panel.add(label);
-        panel.add(yesButton);
-        panel.add(noButton);
 
-        // Add action listeners to the buttons
-        yesButton.addActionListener(new YesButtonActionListener(dialog));
-        noButton.addActionListener(new NoButtonActionListener(dialog));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(new Color(24, 26, 48));
+        JButton yesButton = createConfirmationButton("Tak", new ConfirmDeletionActionListener(dialog));
+        JButton noButton = createConfirmationButton("Nie", new CancelDeletionActionListener(dialog));
+        buttonPanel.add(yesButton);
+        buttonPanel.add(noButton);
+        panel.add(buttonPanel);
 
         dialog.setContentPane(panel);
         dialog.pack();
-        dialog.setLocationRelativeTo(this); // Center on the parent frame
-        dialog.setVisible(true);
+        dialog.setLocationRelativeTo(this);
+        return dialog;
     }
 
-    private class YesButtonActionListener implements ActionListener {
+    private JButton createConfirmationButton(String text, ActionListener actionListener) {
+        JButton button = new JButton(text);
+        button.addActionListener(actionListener);
+        return button;
+    }
+
+    private class ConfirmDeletionActionListener implements ActionListener {
         private final JDialog confirmationDialog;
 
-        private YesButtonActionListener(JDialog confirmationDialog) {
+        private ConfirmDeletionActionListener(JDialog confirmationDialog) {
             this.confirmationDialog = confirmationDialog;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Delete account and close dialogs
-            ClientCredentialsForm.this.parent.deleteAccount();
-            confirmationDialog.dispose(); // Close the confirmation dialog
-            ClientCredentialsForm.this.dispose(); // Close the main form
-            new LogInForm();
-        }
-    }
-
-    private class NoButtonActionListener implements ActionListener {
-        private final JDialog confirmationDialog;
-
-        private NoButtonActionListener(JDialog confirmationDialog) {
-            this.confirmationDialog = confirmationDialog;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            // Close the confirmation dialog without deleting the account
+            deleteAccountAndRedirect();
             confirmationDialog.dispose();
         }
+    }
+
+    private class CancelDeletionActionListener implements ActionListener {
+        private final JDialog confirmationDialog;
+
+        private CancelDeletionActionListener(JDialog confirmationDialog) {
+            this.confirmationDialog = confirmationDialog;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            confirmationDialog.dispose();
+        }
+    }
+
+    private void deleteAccountAndRedirect() {
+        parent.deleteAccount();
+        dispose();
+        new LogInForm();
     }
 }

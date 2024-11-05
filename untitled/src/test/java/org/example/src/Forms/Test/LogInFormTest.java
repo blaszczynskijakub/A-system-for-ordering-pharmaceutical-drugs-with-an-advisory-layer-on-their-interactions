@@ -1,6 +1,6 @@
 package org.example.src.Forms.Test;
 
-import org.example.src.Forms.LogInForm;
+import org.example.src.Forms.logging.LogInForm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

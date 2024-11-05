@@ -1,6 +1,5 @@
 package org.example.src.Forms.Employee;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -11,173 +10,152 @@ public class DeleteUser extends JFrame implements ActionListener {
     private JPanel mainPanel;
     private JLabel mainLabel;
     private JLabel firstNameLabel;
-    private JLabel lastNameLabel;
-    private JLabel addressLabel;
     private JTextField firstNameField;
-    private JTextField lastNameField;
-    private JTextField addressField;
     private JButton acceptButton;
-    private JLabel cardsLabel;
-    private JList cardList;
     private JLabel titleLabel;
-    private JTextField cityTextField;
     private JButton quitButton;
-    private JLabel cityLabel;
     private JButton deleteButton;
-    private JComboBox comboBox1;
+    private JComboBox<String> comboBox1;
     private JButton searchButton;
-
-    public JComboBox getComboBox1() {
-        return comboBox1;
-    }
 
     private final Employee parent;
 
-    public void searchButton()
-    {
-        String name = firstNameField.getText();
-        if(name.split(" ").length!=2)
-        {
-            JFrame frame = new JFrame();
-            JPanel jPanel = new JPanel();
-            jPanel.setBackground(new Color(24, 26, 48));
-            JLabel label = new JLabel("Błędne dane wejściowe, należyty format to 'Jan Kowalski' !");
-            label.setForeground(new Color(255, 255, 255));
-            JButton okButton = new JButton("Ok");
-
-            okButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    frame.dispose(); // Close the current JFrame
-                }
-            });
-            jPanel.add(okButton);
-            jPanel.add(label);
-
-
-
-            addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                    parent.setVisible(true);
-                }
-            });
-
-            frame.setContentPane(jPanel);
-
-            frame.pack();
-            frame.setVisible(true);
-        }
-        else {
-            ArrayList<String> items = parent.populateComboBoxWithNames(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet());
-            comboBox1.setModel(new DefaultComboBoxModel<>(items.toArray(new String[0])));
-        }
-    }
     public DeleteUser(Employee employee) {
-        parent = employee;
+        this.parent = employee;
+        initializeUI();
+        setUpButtonListeners();
+        setVisible(true);
+    }
 
+    private void initializeUI() {
+        setTitle("Usuń użytkownika");
+        setContentPane(mainPanel);
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        addWindowCloseListener();
+        pack();
+    }
+
+    private void setUpButtonListeners() {
         quitButton.addActionListener(this);
         deleteButton.addActionListener(this);
         searchButton.addActionListener(this);
+    }
 
+    private void addWindowCloseListener() {
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 parent.setVisible(true);
             }
         });
-
-        setContentPane(mainPanel);
-        setVisible(true);
-        pack();
-    }
-
-    public JPanel getMainPanel() {
-        return mainPanel;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == acceptButton){
-//            parent.updateCredentials(firstNameField.getText(), lastNameField.getText(), addressField.getText(), cityTextField.getText());
-            dispose();
-            parent.setVisible(true);
-
-        }
-        if(e.getSource() == quitButton){
-            dispose();
-            parent.setVisible(true);
-        }
-        if (e.getSource() == searchButton) {
-
-            searchButton();
-
-        }
-        if(e.getSource() == deleteButton){
-            JFrame frame = new JFrame();
-            JPanel jPanel = new JPanel();
-            jPanel.setBackground(new Color(24, 26, 48));
-            JLabel label = new JLabel("Czy na pewno chcesz usunąć konto?");
-            label.setForeground(new Color(255, 255, 255));
-            JButton yesButton = new JButton("Tak");
-            JButton noButton = new JButton("Nie");
-
-            jPanel.add(label);
-            jPanel.add(yesButton);
-            jPanel.add(noButton);
-
-
-
-            addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                    parent.setVisible(true);
-                }
-            });
-
-            noButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {frame.dispose(); // Close the current JFrame
-                }
-            });
-            yesButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println(comboBox1.getSelectedItem());
-                    parent.deleteAccount(Integer.parseInt(comboBox1.getSelectedItem().toString().split(" ")[comboBox1.getSelectedItem().toString().split(" ").length-1]));
-
-                    ;
-
-
-
-                    frame.dispose(); // Close the current JFrame
-                }
-            });
-
-
-
-            frame.setContentPane(jPanel);
-
-            frame.pack();
-            frame.setVisible(true);
+        if (e.getSource() == quitButton) {
+            closeForm();
+        } else if (e.getSource() == searchButton) {
+            handleSearchAction();
+        } else if (e.getSource() == deleteButton) {
+            showDeleteConfirmationDialog();
         }
     }
 
-    private class YesButtonActionListener implements ActionListener {
-        private final JFrame parent;
+    private void closeForm() {
+        dispose();
+        parent.setVisible(true);
+    }
 
-        private YesButtonActionListener(JFrame parent) {
-            this.parent = parent;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-//            DeleteUser.this.parent.deleteAccount();
-            parent.dispose();
+    private void handleSearchAction() {
+        String name = firstNameField.getText().trim();
+        if (isValidName(name)) {
+            loadUserNamesIntoComboBox(name);
+        } else {
+            showInvalidInputDialog();
         }
     }
 
+    private boolean isValidName(String name) {
+        return name.split(" ").length == 2;
+    }
 
+    private void loadUserNamesIntoComboBox(String name) {
+        ArrayList<String> items = parent.populateComboBoxWithNames(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet());
+        comboBox1.setModel(new DefaultComboBoxModel<>(items.toArray(new String[0])));
+    }
 
+    private void showInvalidInputDialog() {
+        JDialog dialog = new JDialog(this, "Invalid Input", true);
+        JPanel panel = createDialogPanel("Błędne dane wejściowe, należyty format to 'Jan Kowalski' !");
+        dialog.setContentPane(panel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
+    private JPanel createDialogPanel(String message) {
+        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
+        panel.setBackground(new Color(24, 26, 48));
+
+        JLabel label = new JLabel(message, JLabel.CENTER);
+        label.setForeground(Color.WHITE);
+        panel.add(label);
+
+        JButton okButton = new JButton("Ok");
+        okButton.addActionListener(e -> ((JDialog) SwingUtilities.getWindowAncestor(okButton)).dispose());
+        panel.add(okButton);
+
+        return panel;
+    }
+
+    private void showDeleteConfirmationDialog() {
+        JDialog dialog = new JDialog(this, "Confirm Deletion", true);
+        JPanel panel = createConfirmationPanel(dialog);
+        dialog.setContentPane(panel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
+    private JPanel createConfirmationPanel(JDialog dialog) {
+        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
+        panel.setBackground(new Color(24, 26, 48));
+
+        JLabel label = new JLabel("Czy na pewno chcesz usunąć konto?", JLabel.CENTER);
+        label.setForeground(Color.WHITE);
+        panel.add(label);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(new Color(24, 26, 48));
+
+        JButton yesButton = createConfirmationButton("Tak", e -> handleUserDeletion(dialog));
+        JButton noButton = createConfirmationButton("Nie", e -> dialog.dispose());
+
+        buttonPanel.add(yesButton);
+        buttonPanel.add(noButton);
+        panel.add(buttonPanel);
+
+        return panel;
+    }
+
+    private JButton createConfirmationButton(String text, ActionListener actionListener) {
+        JButton button = new JButton(text);
+        button.addActionListener(actionListener);
+        return button;
+    }
+
+    private void handleUserDeletion(JDialog confirmationDialog) {
+        String selectedUser = (String) comboBox1.getSelectedItem();
+        if (selectedUser != null) {
+            int userId = extractUserId(selectedUser);
+            parent.deleteAccount(userId);
+            confirmationDialog.dispose();
+        }
+    }
+
+    private int extractUserId(String selectedUser) {
+        String[] parts = selectedUser.split(" ");
+        return Integer.parseInt(parts[parts.length - 1]);
+    }
 }
-

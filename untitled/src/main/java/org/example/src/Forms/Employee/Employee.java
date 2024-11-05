@@ -1,41 +1,21 @@
 package org.example.src.Forms.Employee;
 
-
 import org.example.src.Forms.DataHandler;
-import org.example.src.Forms.LogInForm;
+import org.example.src.Forms.logging.LogInForm;
+import org.example.src.Forms.logging.PasswordUtils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Calendar;
 
 public class Employee extends JFrame implements ActionListener, DataHandler {
 
-    public Connection getConnection() {
-        return connection;
-    }
-
-    private ResultSet testResultSet;
-
-    public void setTestResultSet(ResultSet testResultSet) {
-        this.testResultSet = testResultSet;
-    }
-
     private ResultSet resultSet;
-    public PreparedStatement getPreparedStatement() {
-        return preparedStatement;
-    }
-
-    public void setPreparedStatement(PreparedStatement preparedStatement) {
-        this.preparedStatement = preparedStatement;
-    }
-
     private PreparedStatement preparedStatement;
+    private Connection connection;
+
     private JButton closeAccButton;
     private JPanel jPanel;
     private JLabel mainLabel;
@@ -45,16 +25,14 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     private JLabel nameFillLabel;
     private JLabel positionFillLabel;
     private JLabel branchNameFillLabel;
-    //    private JLabel branchAdressFillLabel;
     private JLabel titleLabel;
     private JButton changeDataButton;
-    private JLabel adresOddzialuLabel;
+    private JLabel branchAddressLabel;
     private JLabel label1;
     private JButton controlOrdersButton;
     private JButton editDrugsButton;
     private JButton addAccButton;
     private JButton logOutButton;
-
 
     private String firstName;
     private String lastName;
@@ -63,468 +41,251 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     private final int employeeId;
     private double balance;
 
-    private Connection connection = null;
-
-
-    public Employee(int employeeId, String firstName, String lastName, String position, String branchName, String branchAdress) {
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/database_good", "root", "#hom^ik34");
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-
-
-
+    public Employee(int employeeId, String firstName, String lastName, String position, String branchName, String branchAddress, Connection connection) {
+        this.employeeId = employeeId;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.address = branchAdress;
         this.position = position;
-        this.employeeId = employeeId;
+        this.address = branchAddress;
+        initializeUI(branchName, branchAddress);
+        this.connection=connection;
+    }
+
+    private void initializeUI(String branchName, String branchAddress) {
         setTitle("Aplikacja Pracownika");
         setSize(300, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         setContentPane(jPanel);
+        setUpLabels(branchName, branchAddress);
+        setUpButtons();
+        setVisible(true);
+        pack();
+    }
+
+    private void setUpLabels(String branchName, String branchAddress) {
+        nameFillLabel.setText(firstName + " " + lastName);
+        positionFillLabel.setText(position);
+        branchNameFillLabel.setText(branchName);
+        label1.setText(branchAddress);
+    }
+
+    private void setUpButtons() {
         closeAccButton.addActionListener(this);
         changeDataButton.addActionListener(this);
         controlOrdersButton.addActionListener(this);
         editDrugsButton.addActionListener(this);
         addAccButton.addActionListener(this);
         logOutButton.addActionListener(this);
-
-        nameFillLabel.setText(firstName + " " + lastName);
-        positionFillLabel.setText(position);
-        branchNameFillLabel.setText(branchName);
-        label1.setText(branchAdress);
-
-        setVisible(true);
-        pack();
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == changeDataButton) {
-            setVisible(false);
-            new ManageAcc(this);
+            openManageAccountForm();
         } else if (e.getSource() == closeAccButton) {
-            setVisible(false);
-            new DeleteUser(this);
+            openDeleteUserForm();
+        } else if (e.getSource() == controlOrdersButton) {
+            openTransactionHistory();
+        } else if (e.getSource() == editDrugsButton) {
+            openEditDrugsForm();
+        } else if (e.getSource() == logOutButton) {
+            logout();
+        } else if (e.getSource() == addAccButton) {
+            addNewAccount();
         }
-        else if (e.getSource() == controlOrdersButton) {
-            setVisible(false);
-            System.out.println(123);
-            new TransactionsFrame(this, connection);
-        }
-        else if(e.getSource() == editDrugsButton){
-            setVisible(false);
-            new DrugListForEmplo(this,connection);
-        } else if(e.getSource() == logOutButton){
-            setVisible(false);
-            new LogInForm();
-        }
-        else if(e.getSource() == addAccButton){
-                String drugName = JOptionPane.showInputDialog(this, "Wprowadź imię:");
-                String producentName = JOptionPane.showInputDialog(this, "Wprowadź nazwisko:");
-                String drugType = JOptionPane.showInputDialog(this, "Wprowadź miasto:");
-                String price = JOptionPane.showInputDialog(this, "Wprowadź adres:");
-
-                try {
-                    String query = "INSERT INTO clients (first_name, last_name, address, city) VALUES (?, ?, ?, ?)";
-                    PreparedStatement preparedStatement = connection.prepareStatement(query);
-                    preparedStatement.setString(1, drugName);
-                    preparedStatement.setString(2, producentName);
-                    preparedStatement.setString(4, drugType);
-                    preparedStatement.setString(3, price);
-                    preparedStatement.executeUpdate();
-                } catch (SQLException d) {
-                    JOptionPane.showMessageDialog(this, "Nie udało się dodać leku");
-                }
-            }
-
-
     }
 
-    public void updateCredentials(String firstName, String lastName, String address, String city, String id) {
-        // TODO check if given strings are logical (e.g return if firstName contains a digit)
+    private void openManageAccountForm() {
+        setVisible(false);
+        new ManageAcc(this);
+    }
 
-        PreparedStatement preparedStatement = null;
+    private void openDeleteUserForm() {
+        setVisible(false);
+        new DeleteUser(this);
+    }
+
+    private void openTransactionHistory() {
+        setVisible(false);
+        new TransactionsFrame(this, connection);
+    }
+
+    private void openEditDrugsForm() {
+        setVisible(false);
+        new DrugListForEmplo(this, connection);
+    }
+
+    private void logout() {
+        setVisible(false);
+        new LogInForm();
+    }
+
+    private void addNewAccount() {
+        String firstName = JOptionPane.showInputDialog(this, "Wprowadź imię:");
+        String lastName = JOptionPane.showInputDialog(this, "Wprowadź nazwisko:");
+        String city = JOptionPane.showInputDialog(this, "Wprowadź miasto:");
+        String address = JOptionPane.showInputDialog(this, "Wprowadź adres:");
+
+        char[] plainPassword = JOptionPane.showInputDialog(this, "Wprowadź hasło:").toCharArray();
         try {
-            preparedStatement = connection.prepareStatement("UPDATE clients SET first_name = ?, last_name = ?, address = ?, city = ? WHERE id = ?");
+            insertNewClient(firstName, lastName, city, address, plainPassword);
+        } finally {
+            // clear password varia
+            java.util.Arrays.fill(plainPassword, '\0');
+        }
+    }
 
+    private void insertNewClient(String firstName, String lastName, String address, String city, char[] password) {
+        String query = "INSERT INTO clients (first_name, last_name, address, city, password_hash) VALUES (?, ?, ?, ?, ?)";
+
+        String passwordStr = new String(password);
+        String hashedPassword = PasswordUtils.hashPassword(passwordStr);
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, firstName);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setString(3, address);
+            preparedStatement.setString(4, city);
+            preparedStatement.setString(5, hashedPassword);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            showError("Nie udało się dodać klienta: " + e.getMessage());
+        } finally {
+            passwordStr = null;
+        }
+    }
+
+
+
+    public void updateCredentials(String firstName, String lastName, String address, String city, String id) {
+        String query = "UPDATE clients SET first_name = ?, last_name = ?, address = ?, city = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, firstName);
             preparedStatement.setString(2, lastName);
             preparedStatement.setString(3, address);
             preparedStatement.setString(4, city);
             preparedStatement.setInt(5, Integer.parseInt(id));
-
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e);
-            return;
+            showError(e.getMessage());
         }
-
         updateClientInfo();
     }
 
     public void deleteAccount(int id) {
-        PreparedStatement deleteDrugs = null;
-        PreparedStatement deleteClient = null;
-
-        try {
-
-            try {
-                deleteDrugs = connection.prepareStatement("DELETE FROM drugs_and_clients WHERE client_id = ?");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                deleteClient = connection.prepareStatement("DELETE FROM clients WHERE id = ?");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            System.out.println(id);
-            deleteDrugs.setInt(1, id);
-            deleteClient.setInt(1, id);
-
-            deleteDrugs.executeUpdate(); // First delete from drugs_and_clients
-            deleteClient.executeUpdate(); // Then delete from clients
-
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        executeDelete("DELETE FROM drugs_and_clients WHERE client_id = ?", id);
+        executeDelete("DELETE FROM clients WHERE id = ?", id);
     }
 
-
-    protected boolean makeTransaction(boolean standard, double amount, String receiver, DeleteUser form) {
-        PreparedStatement insertTransaction = null;
-        PreparedStatement subtractExpressCost = null;
-        java.util.Date javaDate = new java.util.Date();
-        java.sql.Date mySQLDate = new java.sql.Date(javaDate.getTime());
-        int transactionTypeId;
-        try {
-            insertTransaction = connection.prepareStatement("INSERT INTO transactions(amount, type_id, account_id, transaction_date) VALUES (?, ?, ?, ?)");
-            insertTransaction.setDouble(1, amount);
-//                    insertTransaction.setInt(3, departmentId);
-
-            if (standard) {
-                transactionTypeId = 2;
-                insertTransaction.setInt(2, transactionTypeId);
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(mySQLDate);
-                calendar.add(Calendar.DAY_OF_MONTH, 1);
-
-                insertTransaction.setDate(4, new java.sql.Date(calendar.getTimeInMillis()));
-            } else {
-                transactionTypeId = 8;
-                insertTransaction.setInt(2, transactionTypeId);
-                insertTransaction.setDate(4, mySQLDate);
-
-                subtractExpressCost = connection.prepareStatement("UPDATE medicines SET balance = balance - 5 WHERE client_id = ?");
-                subtractExpressCost.setInt(1, employeeId);
-
-                subtractExpressCost.executeUpdate();
-            }
-
-            insertTransaction.executeUpdate();
-        } catch (Exception e) {
-            System.out.println(e + " TTT");
-            return false;
-        }
-
-        PreparedStatement transferMoneyToReceiver = null;
-        PreparedStatement getAccountID = null;
-        PreparedStatement insertIncoming = null;
-        try {
-//            getAccountID = connection.prepareStatement("SELECT clients_info_view.`ID konta` FROM clients_info_view WHERE `Numer konta` = ?");
-            getAccountID.setString(1, receiver);
-             resultSet = getAccountID.executeQuery();
-            resultSet.next();
-
-            insertIncoming = connection.prepareStatement("INSERT INTO transactions (amount, type_id, account_id, transaction_date) VALUES (?, ?, ?, ?)");
-            insertIncoming.setDouble(1, amount);
-            insertIncoming.setInt(2, transactionTypeId - 1);
-            insertIncoming.setInt(3, resultSet.getInt(1));
-            insertIncoming.setDate(4, mySQLDate);
-            insertIncoming.executeUpdate();
+    private void executeDelete(String query, int id) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(form, "Przelano do klienta innego banku");
+            showError(e.getMessage());
         }
-
-        updateClientInfo();
-        return true;
     }
-
 
     private void updateClientInfo() {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT `Imię`, `Nazwisko`, `Adres`, `Miasto`, `Saldo` FROM clients_info_view WHERE ID = ?");
+        String query = "SELECT `Imię`, `Nazwisko`, `Adres`, `Miasto`, `Saldo` FROM clients_info_view WHERE ID = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, employeeId);
-             resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-
-            firstName = resultSet.getString(1);
-            lastName = resultSet.getString(2);
-            address = resultSet.getString(3);
-            position = resultSet.getString(4);
-            balance = resultSet.getDouble(5);
-
-            repaint();
-
-        } catch (SQLException e) {
-            System.out.println(e);
-            return;
-        }
-
-    }
-
-    protected String[] getLoans(){
-        String[] loans = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT ID, `Imie i nazwisko` FROM loan_info_view WHERE Zatwierdzono IS NULL");
-
-             resultSet = preparedStatement.executeQuery();
-
-            ArrayList<String> loansList = new ArrayList<>();
-
-            while (resultSet.next()){
-                loansList.add(resultSet.getInt(1) + ", " + resultSet.getString(2));
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                firstName = resultSet.getString(1);
+                lastName = resultSet.getString(2);
+                address = resultSet.getString(3);
+                position = resultSet.getString(4);
+                balance = resultSet.getDouble(5);
             }
-
-            loans = loansList.toArray(new String[0]);
-
-        }catch (SQLException e){
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-
-        return loans;
-    }
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    protected String[] getLoanInfo(int id){
-        String[] loans = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT Kwota, `Imie i nazwisko`, `Adres zamieszkania`, `Saldo klienta`, `Obrót na koncie` FROM loan_info_view WHERE ID = ? AND Zatwierdzono IS NULL");
-            preparedStatement.setInt(1, id);
-
-             resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-
-            ArrayList<String> loansList = new ArrayList<>();
-
-            loansList.add(String.valueOf(resultSet.getInt(1)));
-            loansList.add(resultSet.getString(2));
-            loansList.add(resultSet.getString(3));
-            loansList.add(String.valueOf(resultSet.getDouble(4)));
-            loansList.add(String.valueOf(resultSet.getDouble(5)));
-
-            loans = loansList.toArray(new String[0]);
-
-        }catch (SQLException e){
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
-
-        return loans;
-    }
-
-    protected void reviewLoan(boolean approved, int id){
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE loans SET approved = ? WHERE id = ?");
-            preparedStatement.setBoolean(1, approved);
-            preparedStatement.setInt(2, id);
-
-            preparedStatement.executeUpdate();
-        }catch (SQLException e){
-            JOptionPane.showMessageDialog(this, e.getMessage());
+            repaint();
+        } catch (SQLException e) {
+            showError(e.getMessage());
         }
     }
 
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public PreparedStatement getPreparedStatement() {
+        return preparedStatement;
+    }
 
     public ResultSet getResultSet() {
         return resultSet;
     }
 
-//    public ArrayList<String> populateComboBox(String dane) {
-//        try {
-//
-//
-//            String query = "SELECT id, acc_nr, acc_id FROM close_acc_info_view WHERE first_name=? AND last_name=? ";
-//
-//            preparedStatement = connection.prepareStatement(query);
-//            preparedStatement.setString(1, dane.split(" ")[0]);
-//            preparedStatement.setString(2, dane.split(" ")[1]);
-//             resultSet = preparedStatement.executeQuery();
-//
-//            // Populate the comboBox1 with the fetched data
-//            ArrayList<String> items = new ArrayList<>();
-//            while (resultSet.next()) {
-//                items.add("id: " + resultSet.getString("id") + ", nr konta: " + resultSet.getString("acc_nr")+ " , id konta: "+resultSet.getString("acc_id"));
-//            }
-//            // Add items to comboBox1
-//
-//            // Close the resources
-//            resultSet.close();
-//            preparedStatement.close();
-//            return items;
-//
-//
-//
-//        } catch (SQLException ex) {
-//            throw new RuntimeException(ex);
-//        }
-//
-//
-//    }
-
-    public void deleteAcc(String dane, Connection connection) {
-        try {
-            String queryFirst = "DELETE FROM transactions WHERE  account_id=?";
-            PreparedStatement preparedStatementFirst = this.connection.prepareStatement(queryFirst);
-            preparedStatementFirst.setString(1, ((String) dane.split(" ")[8]));
-
-            preparedStatementFirst.executeUpdate();
-            String query = "DELETE FROM medicines WHERE  account_number=?";
-            PreparedStatement preparedStatement = this.connection.prepareStatement(query);
-            preparedStatement.setString(1, ((String) dane.split(" ")[4]));
-
-            preparedStatement.executeUpdate();
-
-
-            preparedStatement.close();
-            preparedStatementFirst.close();
-
-
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
-
-
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public double getBalance() {
-        return balance;
-    }
-
-
-    // History of transactions
     public class TransactionsFrame extends JDialog {
         private JFrame parent;
         private Connection connection;
         private JButton quitButton;
         private JButton changeStatus;
-        private JList<String> transactionsList; // Make transactionsList an instance variable
+        private JList<String> transactionsList;
         private DefaultListModel<String> listModel;
 
         public TransactionsFrame(JFrame parent, Connection connection) {
             this.parent = parent;
             this.connection = connection;
+            initializeUI();
+        }
 
+        private void initializeUI() {
             JPanel jPanel = new JPanel(new BorderLayout());
-            jPanel.setBackground(new Color(24, 26, 48));
-
-            Font font = new Font("Cooper Black", Font.BOLD | Font.ITALIC, 22);
-            JLabel label = new JLabel("Bank Bilardzistów", JLabel.CENTER);
-            label.setFont(font);
-            label.setForeground(Color.WHITE);
-            jPanel.add(label, BorderLayout.NORTH);
+            setUpHeader(jPanel);
+            setUpButtons(jPanel);
+            setUpTransactionsList(jPanel);
 
             setTitle("Historia transakcji");
             setContentPane(jPanel);
+            setSize(600, 400);
+            setLocationRelativeTo(parent);
+            setVisible(true);
+        }
 
+        private void setUpHeader(JPanel jPanel) {
+            jPanel.setBackground(new Color(24, 26, 48));
+            JLabel label = new JLabel("Pracownik", JLabel.CENTER);
+            label.setFont(new Font("Cooper Black", Font.BOLD | Font.ITALIC, 22));
+            label.setForeground(Color.WHITE);
+            jPanel.add(label, BorderLayout.NORTH);
+        }
+
+        private void setUpButtons(JPanel jPanel) {
             quitButton = new JButton("Powrót");
-            quitButton.addActionListener(e -> {
-                setVisible(false);
-                parent.setVisible(true);
-            });
-
-            // Add change status button with functionality
+            quitButton.addActionListener(e -> closeDialog());
             changeStatus = new JButton("Zmień status na 'w dostawie'");
-            changeStatus.addActionListener(e -> {
+            changeStatus.addActionListener(e -> updateTransactionStatus());
+            jPanel.add(quitButton, BorderLayout.SOUTH);
+            jPanel.add(changeStatus, BorderLayout.EAST);
+        }
 
-
-                int startIndex = transactionsList.getSelectedValue().indexOf("Order ID:") + 10; // Start after "Order ID:"
-                int endIndex = transactionsList.getSelectedValue().indexOf("Date:");
-
-                String orderIdString = transactionsList.getSelectedValue().substring(startIndex, endIndex).trim(); // Extract the order ID as a string
-                int orderId = Integer.parseInt(orderIdString.replace(",","")); // Parse to integer
-
-                String queryFirst = "UPDATE  drugs_and_clients SET status='taken' WHERE  id=?";
-
-                PreparedStatement preparedStatementFirst = null;
-                try {
-                    preparedStatementFirst = this.connection.prepareStatement(queryFirst);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                try {
-                    preparedStatementFirst.setInt(1, orderId);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-
-
-                try {
-                    preparedStatementFirst.executeUpdate();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                //mam tu id klienta i id transakcji konkretnej
-                //ale jednak trzeba w sql tez ten status wsadzić :/
-
-            });
+        private void setUpTransactionsList(JPanel jPanel) {
             listModel = new DefaultListModel<>();
-            transactionsList = new JList<>(listModel); // Initialize transactionsList
-
-            // Load transactions into the list
+            transactionsList = new JList<>(listModel);
             loadTransactions();
-
             transactionsList.setFont(new Font("Arial", Font.PLAIN, 16));
             transactionsList.setBackground(new Color(240, 240, 240));
             JScrollPane scrollPane = new JScrollPane(transactionsList);
             scrollPane.setPreferredSize(new Dimension(380, 200));
-
             jPanel.add(scrollPane, BorderLayout.CENTER);
-            jPanel.add(quitButton, BorderLayout.SOUTH);
-            jPanel.add(changeStatus, BorderLayout.EAST);
-
-            addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent windowEvent) {
-                    parent.setVisible(true);
-                }
-            });
-
-            setSize(600, 400); // Increased size for better readability
-            setLocationRelativeTo(parent);
-            setVisible(true);
         }
+
+        private void closeDialog() {
+            setVisible(false);
+            parent.setVisible(true);
+        }
+
         private void loadTransactions() {
-            listModel.clear(); // Clear the list before loading transactions
+            listModel.clear();
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM transactions_all_clients WHERE  status=?");
-                preparedStatement.setString(1,"inRealisation");
-
+                preparedStatement.setString(1, "inRealisation");
 
 
                 ResultSet set = preparedStatement.executeQuery();
@@ -545,9 +306,28 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
             }
         }
 
+        private void updateTransactionStatus() {
+            String selectedValue = transactionsList.getSelectedValue();
+            if (selectedValue == null) return;
+
+            int orderId = extractOrderId(selectedValue);
+            updateOrderStatusInDatabase(orderId);
+        }
+
+        private int extractOrderId(String transactionDetails) {
+            int startIndex = transactionDetails.indexOf("Order ID:") + 10;
+            int endIndex = transactionDetails.indexOf("Date:");
+            return Integer.parseInt(transactionDetails.substring(startIndex, endIndex).trim().replace(",", ""));
+        }
+
+        private void updateOrderStatusInDatabase(int orderId) {
+            String query = "UPDATE drugs_and_clients SET status='taken' WHERE id=?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, orderId);
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                showError(e.getMessage());
+            }
+        }
     }
-
-    }
-
-
-
+}
