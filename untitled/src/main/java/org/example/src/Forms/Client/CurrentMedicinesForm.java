@@ -80,7 +80,7 @@ public class CurrentMedicinesForm extends JFrame implements ActionListener {
         ArrayList<Medicine> inRealisationList = new ArrayList<>();
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(
-                "SELECT `drug_id`, `id`, `transaciont_id`, `drug_name`, `producent`, `price`, `status` " +
+                "SELECT `drug_id`, `id`, `transaciont_id`, `drug_name`, `producent`, `price`, `status`, `drug_type` " +
                         "FROM client_and_drug_all_info_fixed WHERE `id` = ?")) {
             preparedStatement.setInt(1, parent.getClientId());
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -105,6 +105,7 @@ public class CurrentMedicinesForm extends JFrame implements ActionListener {
                 resultSet.getString("producent"),
                 resultSet.getInt("price"),
                 Medicine.OrderStatus.valueOf(resultSet.getString("status"))
+                , resultSet.getString("drug_type")
         );
     }
 

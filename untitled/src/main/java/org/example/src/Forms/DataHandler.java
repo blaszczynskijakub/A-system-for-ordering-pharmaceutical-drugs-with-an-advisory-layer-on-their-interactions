@@ -17,7 +17,7 @@ public interface DataHandler {
                 preparedStatement.setString(3, dane.split(" ")[1] + "%");
                 preparedStatement.setString(4, dane.split(" ")[1] + "%");
             } else {
-                query = "SELECT drug_name, producent_name, price, id FROM drugs WHERE drug_name like ? OR producent_name like ?";
+                query = "SELECT drug_name, producent_name, price, id, drug_type FROM drugs WHERE drug_name like ? OR producent_name like ?";
             }
 
             preparedStatement = connection.prepareStatement(query);
@@ -34,6 +34,7 @@ public interface DataHandler {
                         resultSet.getString("producent_name"),
                         resultSet.getInt("price"),
                         Medicine.OrderStatus.inRealisation
+                        , resultSet.getString("drug_type")
                 ));
             }
 

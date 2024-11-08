@@ -206,7 +206,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     }
 
     private void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Błąd", JOptionPane.ERROR_MESSAGE);
     }
 
     public Connection getConnection() {

@@ -19,10 +19,14 @@ public class OrderMeds extends JFrame implements ActionListener {
     private JButton searchButton;
     private JButton orderMedButton;
 
+    private AdvisoryLayer advisoryLayer;
+
+
     private final Client parent;
 
     public OrderMeds(Client parent) {
         this.parent = parent;
+        this.advisoryLayer = new AdvisoryLayer(parent.getConnection());
         initializeUI();
         setUpButtonListeners();
         setVisible(true);
@@ -89,23 +93,25 @@ public class OrderMeds extends JFrame implements ActionListener {
     }
 
     private void showInvalidInputDialog() {
-        JOptionPane.showMessageDialog(this, "Proszę uzupełnić pole bez znaków specjalnych", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Proszę uzupełnić pole bez znaków specjalnych", "Złe dane wejściowe", JOptionPane.ERROR_MESSAGE);
     }
 
     private void handleOrderMedAction() {
         try {
             ArrayList<Medicine> availableCards = parent.getAvailableCards();
-            //max cards to have
             if (availableCards.size() < 30) {
                 Medicine selectedMedicine = (Medicine) comboBox1.getSelectedItem();
                 if (selectedMedicine != null) {
-                    parent.addCardToAccount(selectedMedicine);
+                    boolean proceed = advisoryLayer.checkForInteractions(parent.getClientId(), selectedMedicine);
+                    if (proceed) {
+                        parent.addCardToAccount(selectedMedicine);
+                    }
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "Za dużo zamówień, do konta może być przypisanych łączenie maksymalnie 29 leków, usuń jakieś produkty", "Order Limit Exceeded", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Za dużo zamówień, do konta może być przypisanych łączenie maksymalnie 29 leków, usuń jakieś produkty", "Przekroczenie limitu zamówień", JOptionPane.WARNING_MESSAGE);
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Błąd przy wczytywaniu aktualnych leków: " + ex.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Błąd przy wczytywaniu aktualnych leków: " + ex.getMessage(), "Błąd bazy danych", JOptionPane.ERROR_MESSAGE);
         }
     }
 

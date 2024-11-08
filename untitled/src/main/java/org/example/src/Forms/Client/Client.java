@@ -70,7 +70,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
 
 
     private void loadMedicinesData() {
-        String query = "SELECT `drug_id`,`id`,`transaciont_id`, `drug_name`,`producent`,`price` , `status`  FROM client_and_drug_all_info_fixed WHERE `id` = ?";
+        String query = "SELECT `drug_id`,`id`,`transaciont_id`, `drug_name`,`producent`,`price` , `status`, `drug_type`  FROM client_and_drug_all_info_fixed WHERE `id` = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, clientId);
             resultSet = preparedStatement.executeQuery();
@@ -84,6 +84,8 @@ public class Client extends JFrame implements ActionListener, DataHandler {
                         resultSet.getString("producent"),
                         resultSet.getInt("price"),
                         Medicine.OrderStatus.valueOf(resultSet.getString("status"))
+                        , resultSet.getString("drug_type")
+
                 );
                 medicines.add(medicine);
             }
@@ -197,7 +199,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
             preparedStatement.setInt(2, clientId);
             preparedStatement.executeUpdate();
             medicines.add(card);
-            showMessage("Pomyślnie dodano kartę.");
+            showMessage("Pomyślnie dodano lek.");
         } catch (SQLException e) {
             showError(e.getMessage());
         }
@@ -212,7 +214,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
                 preparedStatement.setInt(3, card.getTransactionId());
                 preparedStatement.executeUpdate();
                 medicines.remove(card);
-                showMessage("Pomyślnie usunęto kartę.");
+                showMessage("Pomyślnie usunięto lek.");
             } catch (SQLException e) {
                 showError(e.getMessage());
             }
@@ -220,7 +222,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     }
 
     private void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Błąd", JOptionPane.ERROR_MESSAGE);
     }
 
     private void showMessage(String message) {
@@ -228,7 +230,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     }
 
     public static boolean showYesNoPopup(String message) {
-        int option = JOptionPane.showConfirmDialog(null, message, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        int option = JOptionPane.showConfirmDialog(null, message, "Potwierdzenie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         return option == JOptionPane.YES_OPTION;
     }
 

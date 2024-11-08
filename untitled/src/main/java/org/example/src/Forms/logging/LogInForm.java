@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.util.Arrays;
 
 public class LogInForm extends JFrame implements ActionListener {
     private JPanel mainPanel;
@@ -50,14 +49,18 @@ public class LogInForm extends JFrame implements ActionListener {
         char[] enteredPassword = passwordField.getPassword();
 
         try {
+            // Convert char[] to String without modifying the original password
+            String passwordString = new String(enteredPassword);
+
             if (validateEmployeeLogin(enteredUsername, enteredPassword)) {
                 userType = "EMPLOYEE";
-            } else if (validateClientLogin(enteredUsername, Arrays.toString(enteredPassword))) {
+            } else if (validateClientLogin(enteredUsername, passwordString)) {
                 userType = "CLIENT";
             } else {
                 JOptionPane.showMessageDialog(this, "Niepoprawne dane logowania");
             }
         } finally {
+            // Clear entered password for security
             java.util.Arrays.fill(enteredPassword, ' ');
         }
 
@@ -65,6 +68,7 @@ public class LogInForm extends JFrame implements ActionListener {
             setVisible(false);
         }
     }
+
 
 
     private boolean validateEmployeeLogin(String username, char[] password) {
@@ -83,8 +87,6 @@ public class LogInForm extends JFrame implements ActionListener {
                     new Employee(set.getInt("id"), set.getString("first_name"), set.getString("last_name"),
                             set.getString("position"), "pass", "pass", connection);
                     return true;
-                } else {
-                    JOptionPane.showMessageDialog(this, "Nieprawidłowe dane logowania");
                 }
             }
         } catch (SQLException exception) {
@@ -103,11 +105,17 @@ public class LogInForm extends JFrame implements ActionListener {
             if (set.next()) {
                 String storedHash = set.getString("password_hash");
 
-                if (PasswordUtils.checkPassword(password, storedHash)) {
-                    new Client(set.getInt("id"), set.getString("first_name"), set.getString("last_name"), set.getString("address"), set.getString("city"),connection);
+                if (storedHash == null) {
+                    System.out.println("Upewnij się, że klient ma hasło w bazie.");
+                    return false;
+                }
+
+                // Check if the entered password matches the stored hash
+                boolean passwordMatch = PasswordUtils.checkPassword(password, storedHash);
+
+                if (passwordMatch) {
+                    new Client(set.getInt("id"), set.getString("first_name"), set.getString("last_name"), set.getString("address"), set.getString("city"), connection);
                     return true;
-                } else {
-                    JOptionPane.showMessageDialog(this, "Nieprawidłowe dane logowania");
                 }
             }
         } catch (SQLException exception) {
@@ -115,6 +123,7 @@ public class LogInForm extends JFrame implements ActionListener {
         }
         return false;
     }
+
 
     private void initializeDatabaseConnection() {
         try {
