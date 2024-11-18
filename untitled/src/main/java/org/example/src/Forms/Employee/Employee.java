@@ -21,13 +21,10 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     private JLabel mainLabel;
     private JLabel nameLabel;
     private JLabel balanceLabel;
-    private JLabel accountNumberLabel;
     private JLabel nameFillLabel;
     private JLabel positionFillLabel;
-    private JLabel branchNameFillLabel;
     private JLabel titleLabel;
     private JButton changeDataButton;
-    private JLabel branchAddressLabel;
     private JLabel label1;
     private JButton controlOrdersButton;
     private JButton editDrugsButton;
@@ -52,21 +49,30 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     }
 
     private void initializeUI(String branchName, String branchAddress) {
+        // Set the size to be larger (e.g., 1200x800)
+        setSize(500, 400);
+
+        // Center the frame on the screen
+        setLocationRelativeTo(null);
+        this.setResizable(false);
+
+        // Set other frame properties
+        setResizable(false);
         setTitle("Aplikacja Pracownika");
-        setSize(300, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(jPanel);
+
+        // Initialize labels and buttons
         setUpLabels(branchName, branchAddress);
         setUpButtons();
+
+        // Make frame visible
         setVisible(true);
-        pack();
     }
 
     private void setUpLabels(String branchName, String branchAddress) {
         nameFillLabel.setText(firstName + " " + lastName);
         positionFillLabel.setText(position);
-        branchNameFillLabel.setText(branchName);
-        label1.setText(branchAddress);
     }
 
     private void setUpButtons() {
@@ -188,7 +194,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     }
 
     private void updateClientInfo() {
-        String query = "SELECT `Imię`, `Nazwisko`, `Adres`, `Miasto`, `Saldo` FROM clients_info_view WHERE ID = ?";
+        String query = "SELECT `Imię`, `Nazwisko`, `Adres`, `Miasto` FROM clients_info_view WHERE ID = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, employeeId);
             resultSet = preparedStatement.executeQuery();
@@ -197,7 +203,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
                 lastName = resultSet.getString(2);
                 address = resultSet.getString(3);
                 position = resultSet.getString(4);
-                balance = resultSet.getDouble(5);
+
             }
             repaint();
         } catch (SQLException e) {
@@ -236,20 +242,24 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
         }
 
         private void initializeUI() {
+            this.setLocationRelativeTo(null);
+            this.setResizable(false);
             JPanel jPanel = new JPanel(new BorderLayout());
             setUpHeader(jPanel);
             setUpButtons(jPanel);
             setUpTransactionsList(jPanel);
+            this.setResizable(false);
+
 
             setTitle("Historia transakcji");
             setContentPane(jPanel);
-            setSize(600, 400);
+            setSize(1500, 650);
             setLocationRelativeTo(parent);
             setVisible(true);
         }
 
         private void setUpHeader(JPanel jPanel) {
-            jPanel.setBackground(new Color(24, 26, 48));
+            jPanel.setBackground(new Color(255,123,51));
             JLabel label = new JLabel("Pracownik", JLabel.CENTER);
             label.setFont(new Font("Cooper Black", Font.BOLD | Font.ITALIC, 22));
             label.setForeground(Color.WHITE);

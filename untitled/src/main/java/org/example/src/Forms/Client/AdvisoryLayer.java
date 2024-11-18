@@ -34,8 +34,8 @@ public class AdvisoryLayer {
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE,
                         null,
-                        new Object[]{"Yes", "No"},
-                        "Yes"
+                        new Object[]{"Tak", "Nie"},
+                        "Tak"
                 );
                 if (option == JOptionPane.NO_OPTION) {
                     return false; // Stop if the user chooses not to proceed
@@ -59,8 +59,8 @@ public class AdvisoryLayer {
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE,
                         null,
-                        new Object[]{"Yes", "No"},
-                        "Yes"
+                        new Object[]{"Tak", "Nie"},
+                        "Tak"
                 );
                 if (option == JOptionPane.NO_OPTION) {
                     return false; // Stop if the user chooses not to proceed
@@ -127,8 +127,8 @@ public class AdvisoryLayer {
                             JOptionPane.YES_NO_CANCEL_OPTION,
                             JOptionPane.WARNING_MESSAGE,
                             null,
-                            new Object[]{"Yes", "No", "Find Something Else"},
-                            "Yes"
+                            new Object[]{"Tak", "Nie", "Znajdź zamiennik"},
+                            "Tak"
                     );
 
                     if (option == JOptionPane.YES_OPTION) {
@@ -214,9 +214,9 @@ public class AdvisoryLayer {
 
         Boolean[] selectedAttributes = getAttributesForMedicine(selectedMedicine);
 
-        // Check for each specific interaction rule, ensuring both values are non-null
+        // Check for each specific interaction rule, ensuring both valeeues are non-null
 
-        // 1. Colestipol with acidity=1
+        // 1. Colestipol with acidity=1   MAYBE TO DELETE
         if (kolestypol != null && selectedAttributes[1] != null &&
                 acidity != null && selectedAttributes[0] != null) {
             if (kolestypol && selectedAttributes[0]) {
@@ -226,10 +226,12 @@ public class AdvisoryLayer {
 
         // 2. Digestion impact
         if (digestion != null && selectedAttributes[2] != null) {
-            if ((digestion && !selectedAttributes[2]) || (!digestion && selectedAttributes[2])) {
+            if ((digestion && selectedAttributes[2]) || (!digestion && !selectedAttributes[2])) {
                 return true; // Conflict in digestion effects
             }
         }
+
+
 
         // 3. High affinity interaction (high-affinity drugs can dominate low-affinity drugs)
         if (highAffinity != null && selectedAttributes[3] != null) {
@@ -245,9 +247,9 @@ public class AdvisoryLayer {
             }
         }
 
-        // 6. Alcohol interaction (affects driving and interacts with opioids, antihistamines)
-        if (alcohol != null && selectedAttributes[6] != null && alcohol) {
-            if ((selectedAttributes[4] != null && selectedAttributes[4]) || (selectedAttributes[6] != null && selectedAttributes[6])) {
+        // 6. Alcohol interaction (affects driving and interacts with opioids)
+        if (alcohol != null && selectedAttributes[6] != null && selectedAttributes[4] != null && opiodis!=null ) {
+            if ((alcohol && selectedAttributes[4]) || (selectedAttributes[6] && opiodis)) {
                 return true; // Alcohol interaction detected
             }
         }
@@ -282,9 +284,9 @@ public class AdvisoryLayer {
             }
         }
 
-        // 2. Digestion impact
+        // 2. Digestion impact ( two worsing or helping dietision may be problematic
         if (digestion != null && digestionProblem != null) {
-            if ((digestion && !digestionProblem || (!digestion && digestionProblem))) {
+            if ((digestion && digestionProblem ) || (!digestion && !digestionProblem )) {
                 return true; // Conflict in digestion effects
             }
         }
@@ -304,8 +306,8 @@ public class AdvisoryLayer {
         }
 
         // 6. Alcohol interaction (affects driving and interacts with opioids, antihistamines)
-        if (alcohol != null && alcoholProblem != null && alcohol) {
-            if ((opiodisProblem != null && opiodisProblem) || (alcoholProblem != null && alcoholProblem)) {
+        if (alcohol != null && alcoholProblem!= null && opiodisProblem != null && opiodis!=null) {
+            if ((alcohol && opiodisProblem) || (alcoholProblem && opiodis)) {
                 return true; // Alcohol interaction detected
             }
         }

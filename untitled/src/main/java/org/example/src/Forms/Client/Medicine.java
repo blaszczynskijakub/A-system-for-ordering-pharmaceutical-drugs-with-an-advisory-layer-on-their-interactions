@@ -74,7 +74,7 @@ public class Medicine {
 
     @Override
     public String toString() {
-        return drugName + ", " + producent + ", " + price + " PLN";
+        return drugName + ", " + producent +", "+ drugType +  ", " + price + " PLN";
     }
 
     public OrderStatus getOrderStatus() {

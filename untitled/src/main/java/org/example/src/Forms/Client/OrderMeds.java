@@ -10,7 +10,6 @@ public class OrderMeds extends JFrame implements ActionListener {
 
     private JPanel mainPanel;
     private JLabel mainLabel;
-    private JLabel firstNameLabel;
     private JTextField firstNameField;
     private JButton acceptButton;
     private JLabel titleLabel;
@@ -35,11 +34,14 @@ public class OrderMeds extends JFrame implements ActionListener {
     private void initializeUI() {
         setTitle("Zamów leki");
         setContentPane(mainPanel);
-        setSize(400, 300);
+        setSize(900, 350); // Increase the window size for better usability
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setResizable(false); // Disable resizing to remove the maximize button
+        setLocationRelativeTo(null); // Center the window on the screen
         addWindowCloseListener();
-        pack();
+        setVisible(true); // Make the window visible
     }
+
 
     private void setUpButtonListeners() {
         quitButton.addActionListener(this);

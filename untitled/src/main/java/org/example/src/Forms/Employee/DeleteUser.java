@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class DeleteUser extends JFrame implements ActionListener {
     private JPanel mainPanel;
-    private JLabel mainLabel;
     private JLabel firstNameLabel;
     private JTextField firstNameField;
     private JButton acceptButton;
@@ -28,12 +27,16 @@ public class DeleteUser extends JFrame implements ActionListener {
     }
 
     private void initializeUI() {
+        // Set frame size and center it on the screen
+        setSize(600, 500);
+        setLocationRelativeTo(null);
+
+        setResizable(false);
         setTitle("Usuń użytkownika");
         setContentPane(mainPanel);
-        setSize(400, 300);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addWindowCloseListener();
-        pack();
+        this.setResizable(false);
     }
 
     private void setUpButtonListeners() {
@@ -81,13 +84,13 @@ public class DeleteUser extends JFrame implements ActionListener {
     }
 
     private void loadUserNamesIntoComboBox(String name) {
-        ArrayList<String> items = parent.populateComboBoxWithNames(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet());
+        ArrayList<String> items = parent.populateComboBoxWithClients(name, parent.getPreparedStatement(), parent.getConnection(), parent.getResultSet());
         comboBox1.setModel(new DefaultComboBoxModel<>(items.toArray(new String[0])));
     }
 
     private void showInvalidInputDialog() {
-        JDialog dialog = new JDialog(this, "Invalid Input", true);
-        JPanel panel = createDialogPanel("Błędne dane wejściowe, należyty format to 'Jan Kowalski' !");
+        JDialog dialog = new JDialog(this, "Złe wejście", true);
+        JPanel panel = createDialogPanel("Proszę użyj formatu np. 'Jan Kowalski'.");
         dialog.setContentPane(panel);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
@@ -96,7 +99,7 @@ public class DeleteUser extends JFrame implements ActionListener {
 
     private JPanel createDialogPanel(String message) {
         JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
-        panel.setBackground(new Color(24, 26, 48));
+        panel.setBackground(new Color(255, 123, 51));
 
         JLabel label = new JLabel(message, JLabel.CENTER);
         label.setForeground(Color.WHITE);
@@ -110,7 +113,7 @@ public class DeleteUser extends JFrame implements ActionListener {
     }
 
     private void showDeleteConfirmationDialog() {
-        JDialog dialog = new JDialog(this, "Confirm Deletion", true);
+        JDialog dialog = new JDialog(this, "Potwierdź usunięcie", true);
         JPanel panel = createConfirmationPanel(dialog);
         dialog.setContentPane(panel);
         dialog.pack();
@@ -120,14 +123,14 @@ public class DeleteUser extends JFrame implements ActionListener {
 
     private JPanel createConfirmationPanel(JDialog dialog) {
         JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
-        panel.setBackground(new Color(24, 26, 48));
+        panel.setBackground(new Color(255, 123, 51));
 
-        JLabel label = new JLabel("Czy na pewno chcesz usunąć konto?", JLabel.CENTER);
+        JLabel label = new JLabel("Czy na pewno chcesz usnąć tego użytkownika?", JLabel.CENTER);
         label.setForeground(Color.WHITE);
         panel.add(label);
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(24, 26, 48));
+        buttonPanel.setBackground(new Color(255, 123, 51));
 
         JButton yesButton = createConfirmationButton("Tak", e -> handleUserDeletion(dialog));
         JButton noButton = createConfirmationButton("Nie", e -> dialog.dispose());

@@ -18,7 +18,7 @@ public class LogInForm extends JFrame implements ActionListener {
     private JButton loginButton;
 
     private String userType;
-    private Connection connection = null;
+    private Connection connection;
 
     public LogInForm() {
         userType = "";
@@ -26,15 +26,14 @@ public class LogInForm extends JFrame implements ActionListener {
         setupUI();
     }
 
-
     private void setupUI() {
         setTitle("Logowanie");
-        setSize(300, 200);
+        setSize(1000, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginButton.addActionListener(this);
         setContentPane(mainPanel);
+        setLocationRelativeTo(null); // Center window
         setVisible(true);
-        pack();
     }
 
     @Override
@@ -44,12 +43,11 @@ public class LogInForm extends JFrame implements ActionListener {
         }
     }
 
-    public void handleLogin() {
+    private void handleLogin() {
         String enteredUsername = loginField.getText();
         char[] enteredPassword = passwordField.getPassword();
 
         try {
-            // Convert char[] to String without modifying the original password
             String passwordString = new String(enteredPassword);
 
             if (validateEmployeeLogin(enteredUsername, enteredPassword)) {
@@ -69,61 +67,57 @@ public class LogInForm extends JFrame implements ActionListener {
         }
     }
 
-
-
     private boolean validateEmployeeLogin(String username, char[] password) {
-        try (PreparedStatement statement = connection.prepareStatement(
-                "SELECT id, first_name, last_name, department_id, position, password_hash FROM employees WHERE CONCAT(first_name, ' ', last_name) = ?")) {
+        String query = "SELECT id, first_name, last_name, department_id, position, password_hash FROM employees WHERE CONCAT(first_name, ' ', last_name) = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
-            ResultSet set = statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
 
-            if (set.next()) {
-                String storedHash = set.getString("password_hash");
+            if (resultSet.next()) {
+                String storedHash = resultSet.getString("password_hash");
 
                 boolean passwordMatch = PasswordUtils.checkPassword(new String(password), storedHash);
-                java.util.Arrays.fill(password, ' ');
+                java.util.Arrays.fill(password, ' '); // Clear password for security
 
                 if (passwordMatch) {
-                    new Employee(set.getInt("id"), set.getString("first_name"), set.getString("last_name"),
-                            set.getString("position"), "pass", "pass", connection);
+                    new Employee(resultSet.getInt("id"), resultSet.getString("first_name"), resultSet.getString("last_name"),
+                            resultSet.getString("position"), "Branch Name", "Branch Address", connection);
                     return true;
                 }
             }
-        } catch (SQLException exception) {
-            System.out.println("Błąd bazy danych: " + exception);
+        } catch (SQLException e) {
+            System.err.println("Database error during employee login: " + e);
         }
         return false;
     }
 
-
     private boolean validateClientLogin(String username, String password) {
-        try (PreparedStatement statement = connection.prepareStatement(
-                "SELECT password_hash, id, first_name, last_name, address, city FROM clients WHERE CONCAT(first_name, ' ', last_name) = ?")) {
+        String query = "SELECT password_hash, id, first_name, last_name, address, city FROM clients WHERE CONCAT(first_name, ' ', last_name) = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
-            ResultSet set = statement.executeQuery();
+            ResultSet resultSet = statement.executeQuery();
 
-            if (set.next()) {
-                String storedHash = set.getString("password_hash");
+            if (resultSet.next()) {
+                String storedHash = resultSet.getString("password_hash");
 
                 if (storedHash == null) {
-                    System.out.println("Upewnij się, że klient ma hasło w bazie.");
+                    System.err.println("Upewnij się ze klient ma hasło w bazie.");
                     return false;
                 }
 
-                // Check if the entered password matches the stored hash
                 boolean passwordMatch = PasswordUtils.checkPassword(password, storedHash);
 
                 if (passwordMatch) {
-                    new Client(set.getInt("id"), set.getString("first_name"), set.getString("last_name"), set.getString("address"), set.getString("city"), connection);
+                    new Client(resultSet.getInt("id"), resultSet.getString("first_name"), resultSet.getString("last_name"),
+                            resultSet.getString("address"), resultSet.getString("city"), connection);
                     return true;
                 }
             }
-        } catch (SQLException exception) {
-            System.out.println("Błąd bazy danych: " + exception);
+        } catch (SQLException e) {
+            System.err.println("Błąd w bazie w czasie logowania: " + e);
         }
         return false;
     }
-
 
     private void initializeDatabaseConnection() {
         try {
@@ -131,10 +125,12 @@ public class LogInForm extends JFrame implements ActionListener {
             String dbUser = System.getenv("DB_USER");
             String dbPassword = System.getenv("DB_PASSWORD");
             connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
-        } catch (Exception e) {
-            System.out.println("Błąd przy nawiązywaniu połączenia: " + e);
+        } catch (SQLException e) {
+            System.err.println("Błąd połączenia z baząr: " + e);
+            JOptionPane.showMessageDialog(this, "Błąd przy nawiązywaniu połączenia z bazą danych.", "Connection Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     public String getUserType() {
         return userType;
     }
@@ -150,5 +146,4 @@ public class LogInForm extends JFrame implements ActionListener {
     public JPasswordField getPasswordField() {
         return passwordField;
     }
-
 }

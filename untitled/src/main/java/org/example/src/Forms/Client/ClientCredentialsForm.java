@@ -36,10 +36,12 @@ public class ClientCredentialsForm extends JFrame implements ActionListener {
     private void initializeUI() {
         setTitle("Dane klienta");
         setContentPane(mainPanel);
-        setSize(400, 300);
+        setSize(500, 350); // Increase the window size for better visibility
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setResizable(false); // Disable resizing to remove the maximize button
+        setLocationRelativeTo(null); // Center the window on the screen
         setUpButtonListeners();
-        pack();
+        setVisible(true); // Set visibility at the end of initialization
     }
 
     private void initializeFieldsWithData() {
@@ -96,7 +98,7 @@ public class ClientCredentialsForm extends JFrame implements ActionListener {
     }
 
     private JDialog createConfirmationDialog() {
-        JDialog dialog = new JDialog(this, "Confirm Deletion", true);
+        JDialog dialog = new JDialog(this, "Potwierdź usunięcie", true);
         JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
         panel.setBackground(new Color(24, 26, 48));
 

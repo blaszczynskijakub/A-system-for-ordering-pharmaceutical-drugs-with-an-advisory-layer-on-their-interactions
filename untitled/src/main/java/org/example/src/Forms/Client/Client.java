@@ -52,13 +52,14 @@ public class Client extends JFrame implements ActionListener, DataHandler {
 
     private void initUI() {
         setTitle("Aplikacja Klienta");
-        setSize(300, 200);
+        setSize(600, 400); // Make the window larger for better visibility
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(jPanel);
+        setResizable(false); // Disable resizing to remove the maximize button
+        setLocationRelativeTo(null); // Center the window on the screen
         addActionListeners();
         nameFillLabel.setText(firstName + " " + lastName);
         setVisible(true);
-        pack();
     }
 
     private void addActionListeners() {

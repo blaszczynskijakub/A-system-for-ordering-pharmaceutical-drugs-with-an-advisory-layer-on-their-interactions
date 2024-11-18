@@ -13,16 +13,18 @@ public interface DataHandler {
         try {
             String query;
             if (dane.split(" ").length > 1 && preparedStatement != null) {
-                query = "SELECT drug_name, producent_name, price, id FROM drugs WHERE drug_name like ? OR drug_name like ? OR producent_name like ? OR producent_name like ?";
+                query = "SELECT drug_name, producent_name, price, id FROM drugs WHERE drug_name like ? OR drug_name like ? OR producent_name like ? OR producent_name like ? OR drug_type like ?";
                 preparedStatement.setString(3, dane.split(" ")[1] + "%");
                 preparedStatement.setString(4, dane.split(" ")[1] + "%");
+                preparedStatement.setString(5, dane.split(" ")[1] + "%");
             } else {
-                query = "SELECT drug_name, producent_name, price, id, drug_type FROM drugs WHERE drug_name like ? OR producent_name like ?";
+                query = "SELECT drug_name, producent_name, price, id, drug_type FROM drugs WHERE drug_name like ? OR producent_name like ? OR drug_type like ?";
             }
 
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, dane.split(" ")[0] + "%");
             preparedStatement.setString(2, dane.split(" ")[0] + "%");
+            preparedStatement.setString(3, dane.split(" ")[0] + "%");
 
             resultSet = preparedStatement.executeQuery();
 
@@ -46,7 +48,7 @@ public interface DataHandler {
         }
     }
 
-    default ArrayList<String> populateComboBoxWithNames(String dane, PreparedStatement preparedStatement, Connection connection, ResultSet resultSet) {
+    default ArrayList<String> populateComboBoxWithClients(String dane, PreparedStatement preparedStatement, Connection connection, ResultSet resultSet) {
         try {
             String query = "SELECT * FROM clients WHERE first_name like ? or last_name like ? or first_name like ? or last_name like ?";
             preparedStatement = connection.prepareStatement(query);

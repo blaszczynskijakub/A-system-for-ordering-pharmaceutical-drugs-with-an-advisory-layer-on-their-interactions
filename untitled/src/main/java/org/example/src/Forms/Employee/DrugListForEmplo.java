@@ -29,16 +29,19 @@ public class DrugListForEmplo extends JDialog {
     }
 
     private void initializeUI() {
-        setTitle("Historia transakcji");
-        setContentPane(createMainPanel());
-        setSize(600, 400);
+        setTitle("Zarządanie lekami");
+        setSize(1500, 650);
         setLocationRelativeTo(parent);
+        setResizable(false);
+        setContentPane(createMainPanel());
         addWindowCloseListener();
+        this.setResizable(false);
+
     }
 
     private JPanel createMainPanel() {
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(24, 26, 48));
+        mainPanel.setBackground(new Color(255, 123, 51));
 
         JLabel titleLabel = createTitleLabel();
         mainPanel.add(titleLabel, BorderLayout.NORTH);
@@ -53,7 +56,7 @@ public class DrugListForEmplo extends JDialog {
     }
 
     private JLabel createTitleLabel() {
-        JLabel label = new JLabel("Pracownik", JLabel.CENTER);
+        JLabel label = new JLabel("List leków", JLabel.CENTER);
         label.setFont(new Font("Cooper Black", Font.BOLD | Font.ITALIC, 22));
         label.setForeground(Color.WHITE);
         return label;
@@ -69,7 +72,7 @@ public class DrugListForEmplo extends JDialog {
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
-        quitButton = createButton("Powrót", e -> closeForm());
+        quitButton = createButton("Wróć", e -> closeForm());
         editButton = createButton("Edytuj", e -> editRow());
         addButton = createButton("Dodaj", e -> addRow());
         deleteButton = createButton("Usuń", e -> deleteRow());
@@ -103,7 +106,7 @@ public class DrugListForEmplo extends JDialog {
 
     private void loadTransactions() {
         listModel.clear();
-        String query = "SELECT id, drug_name, producent_name, drug_type, price FROM drugs";
+        String query = "SELECT id, drug_name, producent_name, drug_type, price, acidity, kolestypol, digestion, high_affinity, opiodis, carbon, alcohol, need_cover FROM drugs";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
@@ -111,17 +114,30 @@ public class DrugListForEmplo extends JDialog {
                 listModel.addElement(transaction);
             }
         } catch (SQLException e) {
-            showError("Brak transakcji do pokazania");
+            e.printStackTrace();
+            showError("Brak zamówień do wyświetlenia.");
         }
     }
 
     private String formatTransaction(ResultSet resultSet) throws SQLException {
-        return String.format("Order ID: %d, Drug name: %s, Producent name: %s, Drug type: %s, Price: %d",
+        return String.format("Order ID: %d, Drug Name: %s, Manufacturer: %s, Type: %s, Price: %d, Acidity: %s, Kolestypol: %s, Digestion: %s, High Affinity: %s, Opiodis: %s, Carbon: %s, Alcohol: %s, Cover Needed: %s",
                 resultSet.getInt("id"),
                 resultSet.getString("drug_name"),
                 resultSet.getString("producent_name"),
                 resultSet.getString("drug_type"),
-                resultSet.getInt("price"));
+                resultSet.getInt("price"),
+                booleanToText(resultSet.getObject("acidity")),
+                booleanToText(resultSet.getObject("kolestypol")),
+                booleanToText(resultSet.getObject("digestion")),
+                booleanToText(resultSet.getObject("high_affinity")),
+                booleanToText(resultSet.getObject("opiodis")),
+                booleanToText(resultSet.getObject("carbon")),
+                booleanToText(resultSet.getObject("alcohol")),
+                booleanToText(resultSet.getObject("need_cover")));
+    }
+
+    private String booleanToText(Object value) {
+        return (value == null) ? "NULL" : (Boolean.TRUE.equals(value) ? "1" : "0");
     }
 
     private void editRow() {
@@ -129,45 +145,54 @@ public class DrugListForEmplo extends JDialog {
         if (selectedTransaction == null) return;
 
         int orderId = extractOrderId(selectedTransaction);
-        String newDrugName = promptForInput("Wprowadź nową nazwę leku:");
-        String newProducentName = promptForInput("Wprowadź nową nazwę producenta:");
-        String newDrugType = promptForInput("Wprowadź nowy typ leku:");
-        String newPrice = promptForInput("Wprowadź nową cenę:");
 
+        String[] fields = {"Drug Name", "Manufacturer", "Type", "Price", "Acidity", "Kolestypol", "Digestion", "High Affinity", "Opiodis", "Carbon", "Alcohol", "Cover Needed"};
+        String[] newValues = new String[fields.length];
+
+        for (int i = 0; i < fields.length; i++) {
+            newValues[i] = promptForInput("Wprowadź nowy " + fields[i] + ":");
+            if (newValues[i] == null) return; // Cancelled input
+        }
         try {
-            String query = "UPDATE drugs SET drug_name=?, producent_name=?, drug_type=?, price=? WHERE id=?";
+            String query = "UPDATE drugs SET drug_name=?, producent_name=?, drug_type=?, price=?, acidity=?, kolestypol=?, digestion=?, high_affinity=?, opiodis=?, carbon=?, alcohol=?, need_cover=? WHERE id=?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, newDrugName);
-                preparedStatement.setString(2, newProducentName);
-                preparedStatement.setString(3, newDrugType);
-                preparedStatement.setInt(4, Integer.parseInt(newPrice));
-                preparedStatement.setInt(5, orderId);
+                for (int i = 0; i < newValues.length ; i++) {
+                    preparedStatement.setObject(i + 1, parseInput(newValues[i]));
+                }
+                preparedStatement.setInt(13, orderId);
                 preparedStatement.executeUpdate();
             }
             loadTransactions();
         } catch (SQLException e) {
-            showError("Nie udało się edytować danych");
+            showError("Nie udało się zmienić."+e);
         }
     }
 
+    private Object parseInput(String input) {
+        if ("NULL".equalsIgnoreCase(input)) return null;
+        return "1".equals(input) || "0".equals(input) ? Integer.parseInt(input) : input;
+    }
+
     private void addRow() {
-        String drugName = promptForInput("Wprowadź nazwę leku:");
-        String producentName = promptForInput("Wprowadź nazwę producenta:");
-        String drugType = promptForInput("Wprowadź typ leku:");
-        String price = promptForInput("Wprowadź cenę:");
+        String[] prompts = {"Drug Name", "Manufacturer", "Type", "Price", "Acidity", "Kolestypol", "Digestion", "High Affinity", "Opiodis", "Carbon", "Alcohol", "Cover Needed"};
+        String[] values = new String[prompts.length];
+
+        for (int i = 0; i < prompts.length; i++) {
+            values[i] = promptForInput("Wprowadź " + prompts[i] + ":");
+            if (values[i] == null) return; // Cancelled input
+        }
 
         try {
-            String query = "INSERT INTO drugs (drug_name, producent_name, drug_type, price) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO drugs (drug_name, producent_name, drug_type, price, acidity, kolestypol, digestion, high_affinity, opiodis, carbon, alcohol, need_cover) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, drugName);
-                preparedStatement.setString(2, producentName);
-                preparedStatement.setString(3, drugType);
-                preparedStatement.setInt(4, Integer.parseInt(price));
+                for (int i = 0; i < values.length; i++) {
+                    preparedStatement.setObject(i + 1, parseInput(values[i]));
+                }
                 preparedStatement.executeUpdate();
             }
             loadTransactions();
         } catch (SQLException e) {
-            showError("Nie udało się dodać leku");
+            showError("Nie udało się dodac leku");
         }
     }
 
@@ -184,7 +209,7 @@ public class DrugListForEmplo extends JDialog {
             }
             loadTransactions();
         } catch (SQLException e) {
-            showError("Nie udało się usunąć leku, ponieważ są klienci, którzy go używają.");
+            showError("Nie udało się usunać leku, ponieważ niektórzy klienci z niego korzystają.");
         }
     }
 
@@ -199,6 +224,6 @@ public class DrugListForEmplo extends JDialog {
     }
 
     private void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Błąd", JOptionPane.ERROR_MESSAGE);
     }
 }

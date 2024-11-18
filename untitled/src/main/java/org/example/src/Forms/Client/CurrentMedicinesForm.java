@@ -37,12 +37,15 @@ public class CurrentMedicinesForm extends JFrame implements ActionListener {
     private void initializeUI() {
         setTitle("Aktualne leki");
         setContentPane(mainPanel);
-        setSize(1300, 600);
+        setSize(1500, 600); // Set an appropriate size
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setResizable(false); // Disable resizing to remove the maximize button
+        setLocationRelativeTo(null); // Center the window on the screen
         addWindowCloseListener();
         setUpButtonListeners();
-        setVisible(true);
+        setVisible(true); // Make the window visible
     }
+
 
     private void addWindowCloseListener() {
         addWindowListener(new WindowAdapter() {
@@ -178,6 +181,6 @@ public class CurrentMedicinesForm extends JFrame implements ActionListener {
     }
 
     private void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Błąd", JOptionPane.ERROR_MESSAGE);
     }
 }
