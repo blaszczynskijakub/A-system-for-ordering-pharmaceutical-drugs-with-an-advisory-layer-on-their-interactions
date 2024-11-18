@@ -27,7 +27,6 @@ public class DeleteUser extends JFrame implements ActionListener {
     }
 
     private void initializeUI() {
-        // Set frame size and center it on the screen
         setSize(600, 500);
         setLocationRelativeTo(null);
 

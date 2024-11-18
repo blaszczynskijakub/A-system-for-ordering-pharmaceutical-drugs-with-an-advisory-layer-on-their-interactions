@@ -49,24 +49,19 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     }
 
     private void initializeUI(String branchName, String branchAddress) {
-        // Set the size to be larger (e.g., 1200x800)
         setSize(500, 400);
 
-        // Center the frame on the screen
         setLocationRelativeTo(null);
         this.setResizable(false);
 
-        // Set other frame properties
         setResizable(false);
         setTitle("Aplikacja Pracownika");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setContentPane(jPanel);
 
-        // Initialize labels and buttons
         setUpLabels(branchName, branchAddress);
         setUpButtons();
 
-        // Make frame visible
         setVisible(true);
     }
 
@@ -137,7 +132,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
         try {
             insertNewClient(firstName, lastName, city, address, plainPassword);
         } finally {
-            // clear password varia
+            // clear password variable
             java.util.Arrays.fill(plainPassword, '\0');
         }
     }

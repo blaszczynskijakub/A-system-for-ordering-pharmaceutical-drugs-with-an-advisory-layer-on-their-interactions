@@ -34,12 +34,12 @@ public class OrderMeds extends JFrame implements ActionListener {
     private void initializeUI() {
         setTitle("Zamów leki");
         setContentPane(mainPanel);
-        setSize(900, 350); // Increase the window size for better usability
+        setSize(900, 350);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setResizable(false); // Disable resizing to remove the maximize button
-        setLocationRelativeTo(null); // Center the window on the screen
+        setResizable(false);
+        setLocationRelativeTo(null);
         addWindowCloseListener();
-        setVisible(true); // Make the window visible
+        setVisible(true);
     }
 
 

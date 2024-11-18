@@ -151,7 +151,7 @@ public class DrugListForEmplo extends JDialog {
 
         for (int i = 0; i < fields.length; i++) {
             newValues[i] = promptForInput("Wprowadź nowy " + fields[i] + ":");
-            if (newValues[i] == null) return; // Cancelled input
+            if (newValues[i] == null) return;
         }
         try {
             String query = "UPDATE drugs SET drug_name=?, producent_name=?, drug_type=?, price=?, acidity=?, kolestypol=?, digestion=?, high_affinity=?, opiodis=?, carbon=?, alcohol=?, need_cover=? WHERE id=?";
@@ -179,7 +179,7 @@ public class DrugListForEmplo extends JDialog {
 
         for (int i = 0; i < prompts.length; i++) {
             values[i] = promptForInput("Wprowadź " + prompts[i] + ":");
-            if (values[i] == null) return; // Cancelled input
+            if (values[i] == null) return; // cancelled input
         }
 
         try {

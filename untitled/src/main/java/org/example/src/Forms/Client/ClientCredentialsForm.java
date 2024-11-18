@@ -36,12 +36,12 @@ public class ClientCredentialsForm extends JFrame implements ActionListener {
     private void initializeUI() {
         setTitle("Dane klienta");
         setContentPane(mainPanel);
-        setSize(500, 350); // Increase the window size for better visibility
+        setSize(500, 350);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setResizable(false); // Disable resizing to remove the maximize button
-        setLocationRelativeTo(null); // Center the window on the screen
+        setResizable(false);
+        setLocationRelativeTo(null);
         setUpButtonListeners();
-        setVisible(true); // Set visibility at the end of initialization
+        setVisible(true);
     }
 
     private void initializeFieldsWithData() {

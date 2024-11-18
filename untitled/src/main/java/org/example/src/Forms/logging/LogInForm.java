@@ -32,7 +32,7 @@ public class LogInForm extends JFrame implements ActionListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginButton.addActionListener(this);
         setContentPane(mainPanel);
-        setLocationRelativeTo(null); // Center window
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -58,7 +58,7 @@ public class LogInForm extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(this, "Niepoprawne dane logowania");
             }
         } finally {
-            // Clear entered password for security
+            // clear entered password
             java.util.Arrays.fill(enteredPassword, ' ');
         }
 
@@ -77,7 +77,7 @@ public class LogInForm extends JFrame implements ActionListener {
                 String storedHash = resultSet.getString("password_hash");
 
                 boolean passwordMatch = PasswordUtils.checkPassword(new String(password), storedHash);
-                java.util.Arrays.fill(password, ' '); // Clear password for security
+                java.util.Arrays.fill(password, ' ');
 
                 if (passwordMatch) {
                     new Employee(resultSet.getInt("id"), resultSet.getString("first_name"), resultSet.getString("last_name"),

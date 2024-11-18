@@ -37,13 +37,13 @@ public class CurrentMedicinesForm extends JFrame implements ActionListener {
     private void initializeUI() {
         setTitle("Aktualne leki");
         setContentPane(mainPanel);
-        setSize(1500, 600); // Set an appropriate size
+        setSize(1500, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setResizable(false); // Disable resizing to remove the maximize button
-        setLocationRelativeTo(null); // Center the window on the screen
+        setResizable(false);
+        setLocationRelativeTo(null);
         addWindowCloseListener();
         setUpButtonListeners();
-        setVisible(true); // Make the window visible
+        setVisible(true);
     }
 
 

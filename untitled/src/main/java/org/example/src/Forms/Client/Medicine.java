@@ -24,7 +24,7 @@ public class Medicine {
     private  String drugType;
     private final int price;
 
-    // Constructor with all fields
+    // constructor with all fields
     public Medicine(int drugId, int clientId, int transactionId, String drugName, String producent, int price, OrderStatus status, String drugType) {
         this.drugName = drugName;
         this.producent = producent;
@@ -37,7 +37,7 @@ public class Medicine {
         this.orderStatus = status;
     }
 
-    // Constructor with only drug_id for combobox filling(other fields default to 0 or -1)
+    // constructor with only drug_id for combobox filling(other fields default to 0 or -1)
     public Medicine(int drugId, String drugName, String producent, int price, OrderStatus status, String drugType) {
         this.drugName = drugName;
         this.producent = producent;
@@ -81,7 +81,6 @@ public class Medicine {
         return orderStatus;
     }
 
-    // Static method to generate list of medicines
     static ArrayList<Medicine> generateCards(Connection connection, int client_id) throws SQLException {
         ArrayList<Medicine> availableCards = new ArrayList<Medicine>();
         ResultSet resultSet = null;
