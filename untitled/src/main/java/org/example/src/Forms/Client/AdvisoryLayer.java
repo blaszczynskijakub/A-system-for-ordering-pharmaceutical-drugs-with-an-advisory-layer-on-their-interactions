@@ -150,7 +150,7 @@ public class AdvisoryLayer {
     }
 
 
-    private Medicine findAlternativeMedicine(Medicine selectedMedicine, ResultSet resultSetProblem) throws SQLException {
+    public Medicine findAlternativeMedicine(Medicine selectedMedicine, ResultSet resultSetProblem) throws SQLException {
         PreparedStatement stmt = connection.prepareStatement(
                 "SELECT * FROM drugs WHERE drug_type = ? AND id != ?"
         );
@@ -190,7 +190,7 @@ public class AdvisoryLayer {
         // 1. colestipol=1 with acidity=1
         if (kolestypol != null && selectedAttributes[1] != null &&
                 acidity != null && selectedAttributes[0] != null) {
-            if (kolestypol && selectedAttributes[0]) {
+            if ((kolestypol && selectedAttributes[0]) || (selectedAttributes[1] && acidity)) {
                 return true;
             }
         }
@@ -228,7 +228,7 @@ public class AdvisoryLayer {
         return false;
     }
 
-    private boolean hasInteraction(ResultSet resultSet, ResultSet problemDrug) throws SQLException {
+    public boolean hasInteraction(ResultSet resultSet, ResultSet problemDrug) throws SQLException {
         Boolean acidity = getNullableBoolean(resultSet, "acidity");
         Boolean kolestypol = getNullableBoolean(resultSet, "kolestypol");
         Boolean digestion = getNullableBoolean(resultSet, "digestion");
@@ -281,7 +281,7 @@ public class AdvisoryLayer {
     }
 
 
-    private Boolean[] getAttributesForMedicine(Medicine medicine) throws SQLException {
+    public Boolean[] getAttributesForMedicine(Medicine medicine) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(
                 "SELECT acidity, kolestypol, digestion, high_affinity, opiodis, carbon, alcohol FROM drugs WHERE id = ?"
         );
