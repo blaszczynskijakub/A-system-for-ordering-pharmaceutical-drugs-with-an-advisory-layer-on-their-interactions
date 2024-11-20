@@ -47,7 +47,7 @@ public class AdvisoryLayer {
             if (needsCover != null && needsCover && !resultSetCover.isBeforeFirst()) {
                 int option = JOptionPane.showOptionDialog(
                         null,
-                        "Wybrany lek wymaga osłony, możesz zamówić ją zamówić wyszukując kateogrii 'osłona', czy na pewno chcesz kontynuować?",
+                        "Wybrany lek wymaga osłony, możesz zamówić ją zamówić wyszukując kategorii 'oslona', czy na pewno chcesz kontynuować?",
                         "Ostrzeżenie o konieczności zażycia osłony",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.WARNING_MESSAGE,

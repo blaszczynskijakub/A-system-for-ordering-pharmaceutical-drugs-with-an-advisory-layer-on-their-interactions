@@ -97,7 +97,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
         }
     }
 
-    private void openManageAccountForm() {
+    public void openManageAccountForm() {
         setVisible(false);
         new ManageAcc(this);
     }
@@ -107,7 +107,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
         new DeleteUser(this);
     }
 
-    private void openTransactionHistory() {
+    public void openTransactionHistory() {
         setVisible(false);
         new TransactionsFrame(this, connection);
     }
@@ -117,12 +117,12 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
         new DrugListForEmplo(this, connection);
     }
 
-    private void logout() {
+    public void logout() {
         setVisible(false);
         new LogInForm();
     }
 
-    private void addNewAccount() {
+    public void addNewAccount() {
         String firstName = JOptionPane.showInputDialog(this, "Wprowadź imię:");
         String lastName = JOptionPane.showInputDialog(this, "Wprowadź nazwisko:");
         String city = JOptionPane.showInputDialog(this, "Wprowadź miasto:");
@@ -246,7 +246,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
             this.setResizable(false);
 
 
-            setTitle("Historia transakcji");
+            setTitle("Zamówienia klientów");
             setContentPane(jPanel);
             setSize(1500, 650);
             setLocationRelativeTo(parent);

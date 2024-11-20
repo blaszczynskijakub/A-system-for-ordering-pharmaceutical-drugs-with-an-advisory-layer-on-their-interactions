@@ -70,7 +70,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     }
 
 
-    private void loadMedicinesData() {
+    public void loadMedicinesData() {
         String query = "SELECT `drug_id`,`id`,`transaciont_id`, `drug_name`,`producent`,`price` , `status`, `drug_type`  FROM client_and_drug_all_info_fixed WHERE `id` = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, clientId);
@@ -140,7 +140,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         new LogInForm();
     }
 
-    protected void updateCredentials(String firstName, String lastName, String address, String city) {
+    public void updateCredentials(String firstName, String lastName, String address, String city) {
         String query = "UPDATE clients SET first_name = ?, last_name = ?, address = ?, city = ? WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, firstName);
@@ -175,7 +175,7 @@ public class Client extends JFrame implements ActionListener, DataHandler {
 
 
 
-    protected void deleteAccount() {
+    public void deleteAccount() {
         executeUpdate("DELETE FROM drugs_and_clients WHERE client_id = ?", clientId);
         executeUpdate("DELETE FROM clients WHERE id = ?", clientId);
     }

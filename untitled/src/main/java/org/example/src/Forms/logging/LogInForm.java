@@ -12,8 +12,8 @@ public class LogInForm extends JFrame implements ActionListener {
     private JPanel mainPanel;
     private JLabel titleLabel;
     private JLabel loginLabel;
-    private JTextField loginField;
-    private JPasswordField passwordField;
+    public JTextField loginField;
+    public JPasswordField passwordField;
     private JLabel passwordLabel;
     private JButton loginButton;
 
@@ -43,7 +43,7 @@ public class LogInForm extends JFrame implements ActionListener {
         }
     }
 
-    private void handleLogin() {
+    public void handleLogin() {
         String enteredUsername = loginField.getText();
         char[] enteredPassword = passwordField.getPassword();
 
@@ -67,7 +67,7 @@ public class LogInForm extends JFrame implements ActionListener {
         }
     }
 
-    private boolean validateEmployeeLogin(String username, char[] password) {
+    public boolean validateEmployeeLogin(String username, char[] password) {
         String query = "SELECT id, first_name, last_name, department_id, position, password_hash FROM employees WHERE CONCAT(first_name, ' ', last_name) = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
@@ -91,7 +91,7 @@ public class LogInForm extends JFrame implements ActionListener {
         return false;
     }
 
-    private boolean validateClientLogin(String username, String password) {
+    public boolean validateClientLogin(String username, String password) {
         String query = "SELECT password_hash, id, first_name, last_name, address, city FROM clients WHERE CONCAT(first_name, ' ', last_name) = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);

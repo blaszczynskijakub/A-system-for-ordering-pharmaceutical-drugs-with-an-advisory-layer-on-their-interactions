@@ -74,12 +74,14 @@ public class AdvisoryLayerTest {
 
         AdvisoryLayer spyAdvisoryLayer = spy(advisoryLayer);
 
+
+        //overwrite method so we check with kolestypol interaction
         doAnswer(new Answer<Boolean>() {
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
                 ResultSet resultSet = invocation.getArgument(0);
                 ResultSet problemDrug = invocation.getArgument(1);
-                return resultSet.getBoolean("kolestypol") && problemDrug.getBoolean("acidity");
+                return ((resultSet.getBoolean("kolestypol") && problemDrug.getBoolean("acidity") )|| (resultSet.getBoolean("acidity") && problemDrug.getBoolean("kolestypol")));
             }
         }).when(spyAdvisoryLayer).hasInteraction(any(ResultSet.class), any(ResultSet.class));
 

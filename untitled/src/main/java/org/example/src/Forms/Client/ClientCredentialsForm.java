@@ -100,14 +100,14 @@ public class ClientCredentialsForm extends JFrame implements ActionListener {
     private JDialog createConfirmationDialog() {
         JDialog dialog = new JDialog(this, "Potwierdź usunięcie", true);
         JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
-        panel.setBackground(new Color(24, 26, 48));
+        panel.setBackground(new Color(255,123,51));
 
         JLabel label = new JLabel("Czy na pewno chcesz usunąć konto?", JLabel.CENTER);
         label.setForeground(Color.WHITE);
         panel.add(label);
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(24, 26, 48));
+        buttonPanel.setBackground(new Color(255,123,51));
         JButton yesButton = createConfirmationButton("Tak", new ConfirmDeletionActionListener(dialog));
         JButton noButton = createConfirmationButton("Nie", new CancelDeletionActionListener(dialog));
         buttonPanel.add(yesButton);
