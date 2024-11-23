@@ -192,7 +192,7 @@ public class DrugListForEmplo extends JDialog {
             }
             loadTransactions();
         } catch (SQLException e) {
-            showError("Nie udało się dodac leku");
+            showError("Nie udało się dodać leku");
         }
     }
 

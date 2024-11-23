@@ -194,6 +194,8 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     }
 
     public void addCardToAccount(Medicine card) {
+        UIManager.put("OptionPane.messageDialogTitle", "Informacja");
+
         String query = "INSERT INTO drugs_and_clients(drug_id, client_id) VALUES (?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, card.getDrugId());
@@ -207,6 +209,9 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     }
 
     public void deleteCard(Medicine card) {
+        UIManager.put("OptionPane.yesButtonText", "Tak");
+        UIManager.put("OptionPane.noButtonText", "Nie");
+        UIManager.put("OptionPane.messageDialogTitle", "Informacja");
         if (showYesNoPopup("Czy jesteś pewien, że chcesz usunąć ten lek. Ta operacja jest nieodwracalna. Nie wpłynie to na realizację zamówienia.")) {
             String query = "DELETE FROM drugs_and_clients WHERE drug_id = ? AND client_id= ? AND id= ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -231,6 +236,9 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     }
 
     public static boolean showYesNoPopup(String message) {
+        UIManager.put("OptionPane.yesButtonText", "Tak");
+        UIManager.put("OptionPane.noButtonText", "Nie");
+        UIManager.put("OptionPane.messageDialogTitle", "Informacja");
         int option = JOptionPane.showConfirmDialog(null, message, "Potwierdzenie", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         return option == JOptionPane.YES_OPTION;
     }

@@ -26,6 +26,8 @@ public class ManageAcc extends JFrame implements ActionListener {
 
     public ManageAcc(Employee employee) {
         parent = employee;
+        UIManager.put("OptionPane.messageDialogTitle", "Informacja");
+
 
         acceptButton.addActionListener(this);
         quitButton.addActionListener(this);
@@ -49,16 +51,24 @@ public class ManageAcc extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == acceptButton) {
-            parent.updateCredentials(
-                    textField1.getText(),
-                    lastNameField.getText(),
-                    addressField.getText(),
-                    cityTextField.getText(),
-                    firstNameField.getText()
-            );
-            dispose();
-            parent.setVisible(true);
+        if (e.getSource() == acceptButton ) {
+
+            if(!(textField1.getText().trim().isEmpty() || lastNameField.getText().trim().isEmpty() || addressField.getText().trim().isEmpty() || cityTextField.getText().trim().isEmpty() || firstNameField.getText().trim().isEmpty())) {
+                parent.updateCredentials(
+                        textField1.getText(),
+                        lastNameField.getText(),
+                        addressField.getText(),
+                        cityTextField.getText(),
+                        firstNameField.getText()
+                );
+                dispose();
+                parent.setVisible(true);
+            }
+            else {
+
+                JOptionPane.showMessageDialog(this, "Uzupełnij wszystkie pola, aby zmienić dane");
+
+            }
         } else if (e.getSource() == quitButton) {
             dispose();
             parent.setVisible(true);

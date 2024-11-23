@@ -20,6 +20,7 @@ public class DeleteUser extends JFrame implements ActionListener {
     private final Employee parent;
 
     public DeleteUser(Employee employee) {
+        UIManager.put("OptionPane.messageDialogTitle", "Informacja");
         this.parent = employee;
         initializeUI();
         setUpButtonListeners();
@@ -27,7 +28,7 @@ public class DeleteUser extends JFrame implements ActionListener {
     }
 
     private void initializeUI() {
-        setSize(600, 500);
+        setSize(900, 500);
         setLocationRelativeTo(null);
 
         setResizable(false);
@@ -153,6 +154,13 @@ public class DeleteUser extends JFrame implements ActionListener {
             int userId = extractUserId(selectedUser);
             parent.deleteAccount(userId);
             confirmationDialog.dispose();
+            JOptionPane.showMessageDialog(this, "Pomyślnie usunięto klienta");
+            dispose();
+            parent.setVisible(true);
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Nie udało się usunąć klienta");
+
         }
     }
 

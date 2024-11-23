@@ -136,7 +136,7 @@
                 <properties>
                   <background color="-16777216"/>
                   <foreground color="-33997"/>
-                  <text value="Zamknij konto klienta"/>
+                  <text value="Znajdź  klienta"/>
                 </properties>
               </component>
               <component id="b203b" class="javax.swing.JButton" binding="logOutButton">

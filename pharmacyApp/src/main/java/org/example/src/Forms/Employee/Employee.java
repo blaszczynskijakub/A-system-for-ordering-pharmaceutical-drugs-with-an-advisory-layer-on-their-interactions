@@ -123,17 +123,50 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
     }
 
     public void addNewAccount() {
-        String firstName = JOptionPane.showInputDialog(this, "Wprowadź imię:");
-        String lastName = JOptionPane.showInputDialog(this, "Wprowadź nazwisko:");
-        String city = JOptionPane.showInputDialog(this, "Wprowadź miasto:");
-        String address = JOptionPane.showInputDialog(this, "Wprowadź adres:");
+        UIManager.put("OptionPane.inputDialogTitle", "");
+        UIManager.put("OptionPane.cancelButtonText", "Anuluj");
+        UIManager.put("OptionPane.cancelButtonText", "Anuluj");
+        UIManager.put("OptionPane.messageDialogTitle", "Informacja");
 
-        char[] plainPassword = JOptionPane.showInputDialog(this, "Wprowadź hasło:").toCharArray();
+
+
+        String firstName = JOptionPane.showInputDialog(this, "Wprowadź imię:");
+        if (firstName == null) {
+            showError("Nie udało się dodać klienta");
+
+            return;
+        }
+        String lastName = JOptionPane.showInputDialog(this, "Wprowadź nazwisko:");
+        if (lastName == null) {
+            showError("Nie udało się dodać klienta");
+
+            return;
+        }
+        String city = JOptionPane.showInputDialog(this, "Wprowadź miasto:");
+        if (city == null) {
+            showError("Nie udało się dodać klienta");
+
+            return;
+        }
+        String address = JOptionPane.showInputDialog(this, "Wprowadź adres:");
+        if (address == null) {
+            showError("Nie udało się dodać klienta");
+
+            return;
+        }
         try {
+            char[] plainPassword = JOptionPane.showInputDialog(this, "Wprowadź hasło:").toCharArray();
             insertNewClient(firstName, lastName, city, address, plainPassword);
-        } finally {
-            // clear password variable
             java.util.Arrays.fill(plainPassword, '\0');
+            JOptionPane.showMessageDialog(this, "Pomyślnie dodano klienta");
+
+
+
+
+        } catch (Exception e) {
+            showError("Nie udało się dodać klienta");
+
+            return;
         }
     }
 
@@ -168,8 +201,9 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
             preparedStatement.setString(4, city);
             preparedStatement.setInt(5, Integer.parseInt(id));
             preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            showError(e.getMessage());
+        } catch (Exception e) {
+            showError("Nie udało się zmienić danych");
+
         }
         updateClientInfo();
     }
@@ -317,6 +351,7 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
 
             int orderId = extractOrderId(selectedValue);
             updateOrderStatusInDatabase(orderId);
+            this.initializeUI();
         }
 
         private int extractOrderId(String transactionDetails) {
