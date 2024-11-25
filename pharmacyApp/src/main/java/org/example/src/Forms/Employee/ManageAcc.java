@@ -26,7 +26,6 @@ public class ManageAcc extends JFrame implements ActionListener {
 
     public ManageAcc(Employee employee) {
         parent = employee;
-        UIManager.put("OptionPane.messageDialogTitle", "Informacja");
 
 
         acceptButton.addActionListener(this);

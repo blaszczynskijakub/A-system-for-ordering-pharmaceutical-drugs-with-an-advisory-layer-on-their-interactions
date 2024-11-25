@@ -290,15 +290,26 @@ public class Employee extends JFrame implements ActionListener, DataHandler {
         private void setUpHeader(JPanel jPanel) {
             jPanel.setBackground(new Color(255,123,51));
             JLabel label = new JLabel("Zamówienia", JLabel.CENTER);
-            label.setFont(new Font("Cooper Black", Font.BOLD | Font.ITALIC, 22));
+            label.setFont(new Font("Segoe UI Black", Font.BOLD, 22));
             label.setForeground(Color.WHITE);
             jPanel.add(label, BorderLayout.NORTH);
         }
+
+
 
         private void setUpButtons(JPanel jPanel) {
             quitButton = new JButton("Powrót");
             quitButton.addActionListener(e -> closeDialog());
             changeStatus = new JButton("Zmień status na 'w dostawie'");
+
+            changeStatus.setBackground(new Color(255, 255, 255));
+
+            changeStatus.setForeground(new Color(255, 123, 51));
+
+            quitButton.setBackground(new Color(255, 255, 255));
+
+            quitButton.setForeground(new Color(255,123,51));
+
             changeStatus.addActionListener(e -> updateTransactionStatus());
             jPanel.add(quitButton, BorderLayout.SOUTH);
             jPanel.add(changeStatus, BorderLayout.EAST);

@@ -54,10 +54,9 @@ public class DrugListForEmplo extends JDialog {
 
         return mainPanel;
     }
-
     private JLabel createTitleLabel() {
         JLabel label = new JLabel("Lista leków", JLabel.CENTER);
-        label.setFont(new Font("Cooper Black", Font.BOLD | Font.ITALIC, 22));
+        label.setFont(new Font("Segoe UI Black", Font.BOLD, 22));
         label.setForeground(Color.WHITE);
         return label;
     }
@@ -76,6 +75,15 @@ public class DrugListForEmplo extends JDialog {
         editButton = createButton("Edytuj", e -> editRow());
         addButton = createButton("Dodaj", e -> addRow());
         deleteButton = createButton("Usuń", e -> deleteRow());
+        quitButton.setBackground(new Color(55,45,50));
+        editButton.setBackground(new Color(55,45,50));
+        addButton.setBackground(new Color(55,45,50));
+        deleteButton.setBackground(new Color(55,45,50));
+
+        quitButton.setForeground(new Color(255,123,51));
+        editButton.setForeground(new Color(255,123,51));
+        addButton.setForeground(new Color(255,123,51));
+        deleteButton.setForeground(new Color(255,123,51));
 
         buttonPanel.add(quitButton);
         buttonPanel.add(editButton);

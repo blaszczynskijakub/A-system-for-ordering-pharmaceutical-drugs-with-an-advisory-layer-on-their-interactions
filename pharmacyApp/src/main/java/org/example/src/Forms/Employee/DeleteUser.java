@@ -32,7 +32,7 @@ public class DeleteUser extends JFrame implements ActionListener {
         setLocationRelativeTo(null);
 
         setResizable(false);
-        setTitle("Usuń użytkownika");
+        setTitle("Znajdź klienta");
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addWindowCloseListener();
@@ -89,8 +89,8 @@ public class DeleteUser extends JFrame implements ActionListener {
     }
 
     private void showInvalidInputDialog() {
-        JDialog dialog = new JDialog(this, "Złe wejście", true);
-        JPanel panel = createDialogPanel("Proszę użyj formatu np. 'Jan Kowalski'.");
+        JDialog dialog = new JDialog(this, "Złe dane wejściowe", true);
+        JPanel panel = createDialogPanel("Proszę użyj formatu 'Imię Nazwisko'.");
         dialog.setContentPane(panel);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
@@ -99,10 +99,10 @@ public class DeleteUser extends JFrame implements ActionListener {
 
     private JPanel createDialogPanel(String message) {
         JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
-        panel.setBackground(new Color(255, 123, 51));
+        panel.setBackground(Color.WHITE);
 
         JLabel label = new JLabel(message, JLabel.CENTER);
-        label.setForeground(Color.WHITE);
+        label.setForeground(new Color(255, 123, 51));
         panel.add(label);
 
         JButton okButton = new JButton("Ok");
@@ -122,15 +122,14 @@ public class DeleteUser extends JFrame implements ActionListener {
     }
 
     private JPanel createConfirmationPanel(JDialog dialog) {
-        JPanel panel = new JPanel(new GridLayout(2, 1, 10, 10));
-        panel.setBackground(new Color(255, 123, 51));
+        JPanel panel = new JPanel(new GridLayout(2, 2, 20, 10));
+        panel.setBackground(new Color(255, 255, 255));
 
-        JLabel label = new JLabel("Czy na pewno chcesz usnąć tego użytkownika?", JLabel.CENTER);
-        label.setForeground(Color.WHITE);
+        JLabel label = new JLabel("Czy na pewno chcesz usunąć tego użytkownika?", JLabel.CENTER);
+        label.setForeground(new Color(255, 123, 51));
         panel.add(label);
-
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(255, 123, 51));
+        buttonPanel.setBackground(Color.WHITE);
 
         JButton yesButton = createConfirmationButton("Tak", e -> handleUserDeletion(dialog));
         JButton noButton = createConfirmationButton("Nie", e -> dialog.dispose());

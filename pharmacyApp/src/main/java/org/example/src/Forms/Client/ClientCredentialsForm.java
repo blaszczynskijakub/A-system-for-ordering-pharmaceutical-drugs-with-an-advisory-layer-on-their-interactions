@@ -36,7 +36,7 @@ public class ClientCredentialsForm extends JFrame implements ActionListener {
     private void initializeUI() {
         setTitle("Dane klienta");
         setContentPane(mainPanel);
-        setSize(500, 350);
+        setSize(800, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);

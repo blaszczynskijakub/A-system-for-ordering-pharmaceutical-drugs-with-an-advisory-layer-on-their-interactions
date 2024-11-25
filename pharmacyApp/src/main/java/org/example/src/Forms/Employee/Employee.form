@@ -29,7 +29,7 @@
                 </constraints>
                 <properties>
                   <background color="-1"/>
-                  <font name="Cooper Black" size="22" style="3"/>
+                  <font name="Segoe UI Black" size="22" style="0"/>
                   <foreground color="-33997"/>
                   <text value="Pracownik"/>
                 </properties>
@@ -44,6 +44,7 @@
                   <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <font name="JetBrains Mono ExtraBold" size="12" style="1"/>
                   <foreground color="-33997"/>
                   <text value="Imię i nazwisko"/>
                 </properties>
@@ -53,6 +54,7 @@
                   <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <font name="JetBrains Mono ExtraBold" size="12" style="1"/>
                   <foreground color="-33997"/>
                   <text value="Label"/>
                 </properties>
@@ -62,6 +64,7 @@
                   <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <font name="JetBrains Mono ExtraBold" size="12" style="1"/>
                   <foreground color="-33997"/>
                   <text value="Stanowisko"/>
                 </properties>
@@ -71,6 +74,7 @@
                   <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <font name="JetBrains Mono ExtraBold" size="12" style="1"/>
                   <foreground color="-33997"/>
                   <text value="Label"/>
                 </properties>
@@ -94,7 +98,7 @@
                   <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <background color="-16777216"/>
+                  <background color="-13161166"/>
                   <foreground color="-33997"/>
                   <text value="Dodaj konto klienta"/>
                 </properties>
@@ -104,7 +108,7 @@
                   <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <background color="-16777216"/>
+                  <background color="-13161166"/>
                   <foreground color="-33997"/>
                   <text value="Zarządzaj danymi klienta"/>
                 </properties>
@@ -114,7 +118,7 @@
                   <grid row="8" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <background color="-16777216"/>
+                  <background color="-13161166"/>
                   <foreground color="-33997"/>
                   <text value="Obsługa zamówień"/>
                 </properties>
@@ -124,7 +128,7 @@
                   <grid row="9" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <background color="-16777216"/>
+                  <background color="-13161166"/>
                   <foreground color="-33997"/>
                   <text value="Edytuj bazę leków"/>
                 </properties>
@@ -134,7 +138,7 @@
                   <grid row="10" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <background color="-16777216"/>
+                  <background color="-13161166"/>
                   <foreground color="-33997"/>
                   <text value="Znajdź  klienta"/>
                 </properties>
@@ -144,7 +148,7 @@
                   <grid row="11" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <background color="-16777216"/>
+                  <background color="-13161166"/>
                   <foreground color="-33997"/>
                   <text value="Wyloguj się"/>
                 </properties>

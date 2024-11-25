@@ -16,7 +16,7 @@
         </constraints>
         <properties>
           <background color="-1"/>
-          <font name="Consolas" size="36" style="1"/>
+          <font name="Segoe UI Black" size="22" style="0"/>
           <foreground color="-33997"/>
           <text value="Aktualne leki"/>
         </properties>
@@ -26,7 +26,7 @@
           <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Consolas" size="24" style="1"/>
+          <font name="Sylfaen" size="20" style="1"/>
           <foreground color="-33997"/>
           <text value="Leki w realizacji"/>
         </properties>
@@ -36,7 +36,7 @@
           <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Consolas" size="24" style="1"/>
+          <font name="Sylfaen" size="20" style="1"/>
           <foreground color="-33997"/>
           <text value="Leki w dostawie"/>
         </properties>
@@ -46,7 +46,7 @@
           <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <font name="Consolas" size="24" style="1"/>
+          <font name="Sylfaen" size="20" style="1"/>
           <foreground color="-33997"/>
           <text value="Leki odebrane"/>
         </properties>
@@ -89,7 +89,7 @@
           <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <background color="-16777216"/>
+          <background color="-13161166"/>
           <foreground color="-33997"/>
           <text value="Potwierdź odbiór"/>
         </properties>
@@ -99,7 +99,7 @@
           <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <background color="-16777216"/>
+          <background color="-13161166"/>
           <foreground color="-33997"/>
           <text value="Usuń lek"/>
         </properties>
@@ -109,7 +109,7 @@
           <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <background color="-16777216"/>
+          <background color="-13161166"/>
           <foreground color="-33997"/>
           <text value="Powrót"/>
         </properties>

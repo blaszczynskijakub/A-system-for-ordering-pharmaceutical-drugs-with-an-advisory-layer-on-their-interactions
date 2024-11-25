@@ -34,7 +34,7 @@ public class OrderMeds extends JFrame implements ActionListener {
     private void initializeUI() {
         setTitle("Zamów leki");
         setContentPane(mainPanel);
-        setSize(900, 350);
+        setSize(1000, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
