@@ -165,7 +165,13 @@ public class DrugListForEmplo extends JDialog {
             String query = "UPDATE drugs SET drug_name=?, producent_name=?, drug_type=?, price=?, acidity=?, kolestypol=?, digestion=?, high_affinity=?, opiodis=?, carbon=?, alcohol=?, need_cover=? WHERE id=?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 for (int i = 0; i < newValues.length ; i++) {
-                    preparedStatement.setObject(i + 1, parseInput(newValues[i]));
+                    if (!(newValues[i].equals(""))) {
+                        preparedStatement.setObject(i + 1, parseInput(newValues[i]));
+                    }
+                    else {
+                        preparedStatement.setNull(i + 1, java.sql.Types.VARCHAR);
+
+                    }
                 }
                 preparedStatement.setInt(13, orderId);
                 preparedStatement.executeUpdate();
@@ -194,7 +200,11 @@ public class DrugListForEmplo extends JDialog {
             String query = "INSERT INTO drugs (drug_name, producent_name, drug_type, price, acidity, kolestypol, digestion, high_affinity, opiodis, carbon, alcohol, need_cover) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 for (int i = 0; i < values.length; i++) {
-                    preparedStatement.setObject(i + 1, parseInput(values[i]));
+                    if (!(values[i].equals(""))) {
+                        preparedStatement.setObject(i + 1, parseInput(values[i]));
+                    } else {
+                        preparedStatement.setNull(i + 1, java.sql.Types.VARCHAR);
+                    }
                 }
                 preparedStatement.executeUpdate();
             }

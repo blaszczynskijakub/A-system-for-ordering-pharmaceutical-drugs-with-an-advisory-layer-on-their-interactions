@@ -251,53 +251,13 @@ public class Client extends JFrame implements ActionListener, DataHandler {
         this.connection = connection;
     }
 
-    public JButton getManageCardsButton() {
-        return manageCardsButton;
-    }
 
-    public JButton getChangeAccountDetailsButton() {
-        return changeAccountDetailsButton;
-    }
-
-    public JButton getTransferMoneyButton() {
-        return transferMoneyButton;
-    }
-
-    public JPanel getjPanel() {
-        return jPanel;
-    }
-
-    public JLabel getMainLabel() {
-        return mainLabel;
-    }
-
-    public JLabel getNameLabel() {
-        return nameLabel;
-    }
-
-    public JLabel getAccountNumberLabel() {
-        return accountNumberLabel;
-    }
-
-    public JLabel getNameFillLabel() {
-        return nameFillLabel;
-    }
-
-    public JLabel getAccountFillLabel() {
-        return accountFillLabel;
-    }
 
     public JLabel getTitleLabel() {
         return titleLabel;
     }
 
-    public JList getEatSchedule() {
-        return eatSchedule;
-    }
 
-    public JButton getLogOutButton() {
-        return logOutButton;
-    }
 
     public Connection getConnection() {
         return connection;
@@ -311,8 +271,6 @@ public class Client extends JFrame implements ActionListener, DataHandler {
     public String getLastName() { return lastName; }
     public String getAddress() { return address; }
     public String getCity() { return city; }
-    public double getBalance() { return balance; }
-    public ArrayList<Medicine> getCreditCards() { return medicines; }
     public int getClientId() { return clientId; }
     public ArrayList<Medicine> getMedicines() { return medicines; }
 }

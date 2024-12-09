@@ -40,7 +40,7 @@ public class CurrentMedicinesForm extends JFrame implements ActionListener {
 
         setTitle("Aktualne leki");
         setContentPane(mainPanel);
-        setSize(1500, 600);
+        setSize(1500, 800);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);

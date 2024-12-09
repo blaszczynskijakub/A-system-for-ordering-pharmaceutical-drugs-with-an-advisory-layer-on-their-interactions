@@ -55,6 +55,7 @@ public class LogInForm extends JFrame implements ActionListener {
             } else if (validateClientLogin(enteredUsername, passwordString)) {
                 userType = "CLIENT";
             } else {
+                UIManager.put("OptionPane.messageDialogTitle", "Informacja");
                 JOptionPane.showMessageDialog(this, "Niepoprawne dane logowania");
             }
         } finally {
@@ -68,7 +69,7 @@ public class LogInForm extends JFrame implements ActionListener {
     }
 
     public boolean validateEmployeeLogin(String username, char[] password) {
-        String query = "SELECT id, first_name, last_name, department_id, position, password_hash FROM employees WHERE CONCAT(first_name, ' ', last_name) = ?";
+        String query = "SELECT id, first_name, last_name,  position, password_hash FROM employees WHERE CONCAT(first_name, ' ', last_name) = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
