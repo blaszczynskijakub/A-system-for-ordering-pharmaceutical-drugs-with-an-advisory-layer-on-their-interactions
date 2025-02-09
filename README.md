@@ -1,0 +1,1 @@
+A desktop application that implements e-commerce services of a given pharmacy chain. Additionally, the application includes an advisory layer that helps customers in the process of ordering medicines.
